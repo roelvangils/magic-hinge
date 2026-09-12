@@ -38,7 +38,7 @@ fetch('release.json').then(response => {
   if (!context) return;
   let manifest;
   let manifestURL = new URL(theme === 'dark' ? story.dataset.darkSequence : story.dataset.sequence, location.href);
-  const firstFrame = 25; // About 16.6°: 15% of the sequence's 110° fully open pose.
+  const firstFrame = 14; // About 5.6°: 5% of the sequence's 110° fully open pose.
   let previewFrame;
   const manifests = new Map();
   try {
@@ -109,9 +109,10 @@ fetch('release.json').then(response => {
     if (!enabled()) return;
     const headerHeight = document.querySelector('.site-header').offsetHeight;
     const rect = story.getBoundingClientRect();
-    const destination = rect.top + scrollY + rect.height - Math.max(280, innerHeight-headerHeight) - headerHeight;
+    const closing = target >= Math.round(last*0.85);
+    const destination = closing ? 0 : rect.top + scrollY + rect.height - Math.max(280, innerHeight-headerHeight) - headerHeight;
     const from = scrollY;
-    if (destination <= from) return;
+    if (Math.abs(destination-from) < 1) return;
     const started = performance.now();
     function advance(now) {
       const progress = Math.min(1, (now-started)/1800);
@@ -217,6 +218,7 @@ fetch('release.json').then(response => {
     const end = storyTop + rect.height-stage.offsetHeight-headerHeight;
     const progress = Math.max(0,Math.min(1,(scrollY-start)/Math.max(1,end-start)));
     target = Math.round(firstFrame+(last-firstFrame)*progress);
+    play.setAttribute('aria-label', target >= Math.round(last*0.85) ? 'Close the MacBook' : 'Open the MacBook');
     hint.hidden = progress > .12;
     caption.textContent = progress < .22 ? 'A glimpse of the magic. Keep scrolling.' : progress < .78 ? 'Watch your desktop turn to glass.' : '';
     if (!visible) return;

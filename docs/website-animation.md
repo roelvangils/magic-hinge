@@ -31,7 +31,7 @@ width/height attributes in sync when changing the output resolution.
 The scroll player uses native page scrolling with a sticky scene. Scroll position
 maps to a frame in either direction; the camera stays centered and fixed for a symmetric front view. Each render
 keeps 24 pixels of top clearance so the closed laptop sits close to the hero
-without clipping the opening lid. The page starts at frame 25 (about 16.6 degrees, or 15% open), then scrolling advances
+without clipping the opening lid. The page starts at frame 14 (about 5.6 degrees, or 5% open), then scrolling advances
 to frame 120. The stage initially fills the space below the hero and expands
 to the available viewport as the hero scrolls away. The player crops only the
 unused lower image margin to center the visible device.
