@@ -4,7 +4,7 @@
 <h1 align="center">Magic Hinge</h1>
 
 <p align="center">
-  <img src="assets/screenshots/magic-hinge-demo.png" alt="Magic Hinge demo showing a MacBook with a frosted-glass desktop effect and click, swipe or scroll controls" width="880">
+  <img src="website/assets/app-overview-light.png" alt="Magic Hinge in light mode, showing the MacBook simulator and effect settings" width="880">
 </p>
 
 A little magic in your MacBook hinge. Tilt the screen and watch your desktop
