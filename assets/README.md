@@ -13,3 +13,6 @@ are 256px and follow the website appearance setting, including the favicon.
 bundles Assets.car with Aqua and DarkAqua icon stacks, plus the generated ICNS
 fallback for older macOS versions. The DMG uses that ICNS as its volume icon.
 The app's bundle identifier and preferences remain unchanged.
+
+Building the icon requires Xcode 27 or later, matching the Icon Composer source.
+CI uses the `xcode-27` runner; this does not change the macOS 14.2 app target.
