@@ -67,7 +67,7 @@ fetch('release.json').then(response => {
   const boundsCanvas = document.createElement('canvas');
   boundsCanvas.width = 288; boundsCanvas.height = 200;
   const boundsContext = boundsCanvas.getContext('2d', {willReadFrequently:true});
-  function drawFrame(image) {
+  function drawFrame(image, opacity = 1, clear = true) {
     const background = manifest.background || (theme === 'dark' ? '1d1d1f' : 'f5f5f7');
     // Use one scale throughout the sequence; even the full source height fits
     // with a safety margin, so the opening animation never clips or pulses in size.
@@ -91,13 +91,19 @@ fetch('release.json').then(response => {
       framing.set(image,offset);
       artworkTop.set(image,offset+top*manifest.height/200*scale);
     }
-    context.fillStyle = '#'+background;
-    context.fillRect(0,0,canvas.width,canvas.height);
+    if (clear) {
+      context.fillStyle = '#'+background;
+      context.fillRect(0,0,canvas.width,canvas.height);
+    }
+    context.globalAlpha = opacity;
     context.drawImage(image,(canvas.width-manifest.width*scale)/2,offset,manifest.width*scale,manifest.height*scale);
+    context.globalAlpha = 1;
   }
-  function positionPill(image) {
+  function positionPill(image, nextImage, blend = 0) {
     const height = Math.min(canvas.clientHeight,canvas.clientWidth*canvas.height/canvas.width);
-    const top = (canvas.clientHeight-height)/2 + height*(artworkTop.get(image) || 0)/canvas.height;
+    const firstTop = artworkTop.get(image) || 0;
+    const blendedTop = nextImage ? firstTop+((artworkTop.get(nextImage) ?? firstTop)-firstTop)*blend : firstTop;
+    const top = (canvas.clientHeight-height)/2 + height*blendedTop/canvas.height;
     pill.style.top = `${Math.max(4,top-44)}px`;
   }
   const cache = new Map();
@@ -108,7 +114,7 @@ fetch('release.json').then(response => {
   let broken = false, generation = 0;
   const enabled = () => !broken && root.dataset.reduceMotion !== 'on';
   let playback = 0, idleStarted = null, lastInteraction = performance.now();
-  const idleAngles = Array.from({length:firstFrame}, (_,index) => {
+  const idleAngles = Array.from({length:firstFrame+1}, (_,index) => {
     const t = index/(last*0.85);
     return 110*t*t*(3-2*t);
   });
@@ -232,10 +238,15 @@ fetch('release.json').then(response => {
     const progress = Math.max(0,Math.min(1,(scrollY-start)/Math.max(1,end-start)));
     target = Math.round(firstFrame+(last-firstFrame)*progress);
     const idleEligible = visible && scrollY < 2 && !playback && document.visibilityState === 'visible';
+    let idleNext = null, idleBlend = 0;
     if (idleEligible && performance.now()-lastInteraction >= 1500) {
       idleStarted ??= performance.now();
       const angle = 2.5*(1+Math.cos((performance.now()-idleStarted)*2*Math.PI/6000));
-      target = idleAngles.reduce((best,value,index) => Math.abs(value-angle) < Math.abs(idleAngles[best]-angle) ? index : best, 0);
+      // Interpolate adjacent poses every display frame instead of holding each
+      // of the few near-closed source frames for hundreds of milliseconds.
+      idleNext = Math.max(1,idleAngles.findIndex(value => value >= angle));
+      target = idleNext-1;
+      idleBlend = (angle-idleAngles[target])/(idleAngles[idleNext]-idleAngles[target]);
     } else { idleStarted = null; }
     canvas.dataset.idle = String(idleEligible && idleStarted !== null);
 
@@ -244,11 +255,12 @@ fetch('release.json').then(response => {
     caption.textContent = progress < .22 ? 'A glimpse of the magic. Keep scrolling.' : progress < .78 ? 'Watch your desktop turn to glass.' : '';
     if (!visible) return;
     // Keep the last good frame visible during a fast scroll or a failed request.
-    if (cache.has(target) && target !== drawn) {
+    if (cache.has(target) && (target !== drawn || idleNext !== null)) {
       drawFrame(cache.get(target));
+      if (idleNext !== null && cache.has(idleNext)) drawFrame(cache.get(idleNext),idleBlend,false);
       drawn = target; canvas.dataset.frame = String(target); canvas.hidden = false; poster.hidden = true;
     }
-    if (drawn >= 0 && cache.has(drawn)) positionPill(cache.get(drawn));
+    if (drawn >= 0 && cache.has(drawn)) positionPill(cache.get(drawn), idleNext !== null ? cache.get(idleNext) : null, idleBlend);
     const wanted = [target];
     for (let distance=1; distance<=5; distance++) wanted.push(target+distance,target-distance);
     for (const index of wanted) {
