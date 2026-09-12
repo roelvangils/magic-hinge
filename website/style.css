@@ -32,7 +32,7 @@
 @supports ((background-clip:text) or (-webkit-background-clip:text)){
   .title-word::after,.title-rest{background:var(--title-gradient);background-clip:text;-webkit-background-clip:text;color:transparent}
 }
-:root[data-reduce-motion="off"] .title-word::after{-webkit-mask-size:100% 300%;mask-size:100% 300%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;animation-duration:1000ms;animation-timing-function:ease-in-out;animation-fill-mode:both}
+:root[data-reduce-motion="off"] .title-word::after{-webkit-mask-size:100% 300%;mask-size:100% 300%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;animation-duration:2000ms;animation-timing-function:ease-in-out;animation-fill-mode:both}
 :root[data-reduce-motion="off"] .title-open::after{-webkit-mask-image:linear-gradient(to bottom,#000 33.333%,transparent 66.667%);mask-image:linear-gradient(to bottom,#000 33.333%,transparent 66.667%);animation-name:title-fill-down}
 :root[data-reduce-motion="off"] .title-up::after{-webkit-mask-image:linear-gradient(to bottom,transparent 33.333%,#000 66.667%);mask-image:linear-gradient(to bottom,transparent 33.333%,#000 66.667%);animation-name:title-fill-up}
 @keyframes title-fill-down{from{-webkit-mask-position:0 100%;mask-position:0 100%}to{-webkit-mask-position:0 0;mask-position:0 0}}

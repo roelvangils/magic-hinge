@@ -133,7 +133,7 @@ python3 scripts/install-website-sequence.py build/idle3-webp-dark --appearance d
 ```
 
 The hero title starts with fully visible, stationary light-gray “Open up”.
-A one-second color fill reveals the gradient over Open from top to bottom and
+A two-second color fill reveals the gradient over Open from top to bottom and
 up from bottom to top, simultaneously with identical easing. Opposing CSS masks
 provide soft fade edges over the gray base letters without moving the text.
 The heading retains one accessible name. The site Reduce Motion control shows
