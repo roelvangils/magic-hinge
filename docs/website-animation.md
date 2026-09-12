@@ -132,8 +132,9 @@ python3 scripts/encode-website-webp.py build/idle3-masters-dark build/idle3-webp
 python3 scripts/install-website-sequence.py build/idle3-webp-dark --appearance dark --motion idle
 ```
 
-The entire hero title starts with fully visible, stationary light-gray letters.
-All six words fill simultaneously over two seconds with identical easing.
+The entire stationary hero title first fades from invisible to light gray over
+half a second. All six words then fill simultaneously over two seconds with
+identical easing, for a total duration of 2.5 seconds.
 Open, to and little fill top to bottom; up, a and magic. fill bottom to top.
 Opposing CSS masks provide soft fade edges over the gray base letters without
 moving the text. An inverse mask removes gray at exactly the same moving fade boundary that

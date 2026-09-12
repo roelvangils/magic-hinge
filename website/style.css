@@ -35,6 +35,11 @@
 :root[data-reduce-motion="off"] .title-word:nth-child(even)::after{-webkit-mask-image:linear-gradient(to bottom,transparent 33.333%,#000 66.667%);mask-image:linear-gradient(to bottom,transparent 33.333%,#000 66.667%);animation-name:title-fill-up}
 :root[data-reduce-motion="off"] .title-word:nth-child(odd)::before{-webkit-mask-image:linear-gradient(to bottom,transparent 33.333%,#000 66.667%);mask-image:linear-gradient(to bottom,transparent 33.333%,#000 66.667%);animation-name:title-fill-down}
 :root[data-reduce-motion="off"] .title-word:nth-child(even)::before{-webkit-mask-image:linear-gradient(to bottom,#000 33.333%,transparent 66.667%);mask-image:linear-gradient(to bottom,#000 33.333%,transparent 66.667%);animation-name:title-fill-up}
+:root[data-reduce-motion="off"] .title-word::after{animation-delay:500ms}
+:root[data-reduce-motion="off"] .title-word::before{animation-duration:2000ms,500ms;animation-delay:500ms,0ms;animation-timing-function:ease-in-out,ease-out}
+:root[data-reduce-motion="off"] .title-word:nth-child(odd)::before{animation-name:title-fill-down,title-gray-appear}
+:root[data-reduce-motion="off"] .title-word:nth-child(even)::before{animation-name:title-fill-up,title-gray-appear}
+@keyframes title-gray-appear{from{opacity:0}to{opacity:1}}
 @keyframes title-fill-down{from{-webkit-mask-position:0 100%;mask-position:0 100%}to{-webkit-mask-position:0 0;mask-position:0 0}}
 @keyframes title-fill-up{from{-webkit-mask-position:0 0;mask-position:0 0}to{-webkit-mask-position:0 100%;mask-position:0 100%}}
 @media(forced-colors:active){.title-word{background:none!important;color:CanvasText!important;-webkit-text-fill-color:CanvasText;animation:none!important}.title-word::before,.title-word::after{display:none!important}}
