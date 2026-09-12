@@ -60,6 +60,35 @@ fetch('release.json').then(response => {
   previewFrame = manifest.frames[firstFrame];
   poster.src = new URL(previewFrame,manifestURL).href;
   canvas.width = manifest.width; canvas.height = Math.round(manifest.height*0.86);
+  // Rendered frames have top-aligned artwork. Center the device, not its blank canvas.
+  const framing = new WeakMap();
+  const boundsCanvas = document.createElement('canvas');
+  boundsCanvas.width = 288; boundsCanvas.height = 200;
+  const boundsContext = boundsCanvas.getContext('2d', {willReadFrequently:true});
+  function drawFrame(image) {
+    const background = manifest.background || (theme === 'dark' ? '1d1d1f' : 'f5f5f7');
+    let offset = framing.get(image);
+    if (offset === undefined) {
+      boundsContext.drawImage(image,0,0,288,200);
+      const pixels = boundsContext.getImageData(0,0,288,200).data;
+      const rgb = [0,2,4].map(i => parseInt(background.slice(i,i+2),16));
+      let top = 200, bottom = 0;
+      for (let y=0; y<200; y++) {
+        let occupied = 0;
+        for (let x=0; x<288; x++) {
+          const i = (y*288+x)*4;
+          // Ignore near-background pixels and the faint floating shadow.
+          if (Math.max(Math.abs(pixels[i]-rgb[0]),Math.abs(pixels[i+1]-rgb[1]),Math.abs(pixels[i+2]-rgb[2])) > 40) occupied++;
+        }
+        if (occupied >= 6) { top = Math.min(top,y); bottom = y+1; }
+      }
+      offset = bottom > top ? (canvas.height-(top+bottom)*manifest.height/200)/2 : 0;
+      framing.set(image,offset);
+    }
+    context.fillStyle = '#'+background;
+    context.fillRect(0,0,canvas.width,canvas.height);
+    context.drawImage(image,0,offset,manifest.width,manifest.height);
+  }
   const cache = new Map();
   const failed = new Set();
   const loading = new Map();
@@ -190,7 +219,7 @@ fetch('release.json').then(response => {
     if (!visible) return;
     // Keep the last good frame visible during a fast scroll or a failed request.
     if (cache.has(target) && target !== drawn) {
-      context.drawImage(cache.get(target),0,0,manifest.width,Math.round(manifest.height*0.86),0,0,canvas.width,canvas.height);
+      drawFrame(cache.get(target));
       drawn = target; canvas.dataset.frame = String(target); canvas.hidden = false; poster.hidden = true;
     }
     const wanted = [target];
