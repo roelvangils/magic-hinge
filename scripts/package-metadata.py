@@ -6,7 +6,7 @@ r = json.loads(Path('release.json').read_text())
 p = dict(CFBundleIdentifier=r['bundleIdentifier'], CFBundleExecutable='MagicHinge',
          CFBundleName='Magic Hinge', CFBundleDisplayName='Magic Hinge', CFBundleDevelopmentRegion='en',
          CFBundleLocalizations=['en','nl'], CFBundlePackageType='APPL', CFBundleIconFile='AppIcon',
-         CFBundleShortVersionString=r['version'], CFBundleVersion=str(r['build']),
+         CFBundleShortVersionString=r['version'], MagicHingeDisplayVersion=r.get('displayVersion',r['version']), CFBundleVersion=str(r['build']),
          LSMinimumSystemVersion=r['minimumSystemVersion'], LSArchitecturePriority=['arm64'],
          NSHighResolutionCapable=True,
          NSScreenCaptureUsageDescription='Magic Hinge uses a temporary screen capture to animate your desktop. Images stay in memory on your Mac.',

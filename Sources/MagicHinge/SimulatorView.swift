@@ -10,6 +10,7 @@ struct SimulatorView: View {
     @ObservedObject var appModel: AppModel
     @ObservedObject var model: SimulatorModel
     var suspended = false
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.scenePhase) private var scenePhase
     @State private var playing = false
     private var animatePreview: Bool { playing && scenePhase == .active && !appModel.effectActive && !suspended }
@@ -73,7 +74,8 @@ struct SimulatorView: View {
             if let error = model.error { Text(error).foregroundStyle(.red).font(.caption).padding(.bottom,12) }
         }
         .frame(minWidth:960,minHeight:600)
-        .onAppear { model.update(settings:appModel.settings); model.setVisible(!suspended); if !suspended { model.refreshDesktop() }; if CommandLine.arguments.contains("--example-image") { model.setAngle(90) } }
+        .onChange(of:colorScheme) { _,value in model.setExampleAppearance(dark:value == .dark) }
+        .onAppear { model.setExampleAppearance(dark:colorScheme == .dark); model.update(settings:appModel.settings); model.setVisible(!suspended); if !suspended { model.refreshDesktop() }; if CommandLine.arguments.contains("--example-image") { model.setAngle(90) } }
         .onDisappear { model.setVisible(false) }
         .onChange(of:suspended) { _,value in model.setVisible(!value && scenePhase == .active); if !value { model.refreshDesktop() } }
         .onChange(of:scenePhase) { _,value in model.setVisible(value == .active && !suspended) }

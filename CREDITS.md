@@ -14,6 +14,11 @@ It does not relicense third-party assets or dependencies.
 | HID protocol research | Sam Henri Gold, [LidAngleSensor](https://github.com/samhenrigold/LidAngleSensor) | [Apache 2.0 notice](docs/licenses/LidAngleSensor-Apache-2.0.txt) |
 | Perspective inspiration | Elijah Semyonov, [DuoLikeAnimation](https://github.com/elijah-semyonov/DuoLikeAnimation) | [MIT notice](docs/licenses/DuoLikeAnimation-MIT.txt) |
 | PermissionFlow 2.11.2 | Jaywcjlove | [MIT](docs/licenses/PermissionFlow-MIT.txt). The Dutch resource supplement is authored in this project. |
+| Website Apple logo | [Simple Icons](https://github.com/simple-icons/simple-icons) | CC0; Apple trademark remains with Apple. |
+| Website GitHub mark | [Primer Octicons](https://github.com/primer/octicons) | [MIT notice](docs/licenses/Octicons-MIT.txt); GitHub trademark remains with GitHub. |
+| Simulator screenshots (`ExampleScreens/light.png`, `dark.png`) | Supplied by the maintainer for the app and website | Embedded Apple interface, map and wallpaper artwork retains its respective ownership; excluded from the original-code MIT grant. |
+| Website feature images | Supplied by the maintainer for the website | Apple imagery and the supplied hinge sketch retain their respective ownership; excluded from the original-code MIT grant. |
+| Website laptop frame sequence | Rendered locally from the original Apple model with the app’s shader and maintainer-supplied screenshots | Third-party model terms still apply; the rendered model artwork is excluded from the original-code MIT grant. |
 | Sparkle 2.9.6 | Sparkle contributors | [Sparkle and bundled third-party licenses](docs/licenses/Sparkle-LICENSE.txt) |
 
 Unused DesertWallpaper.jpg and DuoNight.jpg are development source assets and

@@ -2,34 +2,59 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A little magic in your MacBook hinge. A free, open-source macOS app that turns your desktop into moving frosted glass.">
+  <meta name="description" content="A little magic in your MacBook hinge. A free, open-source macOS app in public beta that turns your desktop into moving frosted glass.">
   <meta name="color-scheme" content="light dark">
-  <title>Magic Hinge — A little magic in your MacBook</title>
+  <title>Magic Hinge 0.9 Beta — A little magic in your MacBook</title>
+  <script src="preferences.js"></script>
   <link rel="icon" href="assets/icon.png"><link rel="stylesheet" href="style.css">
   <script src="site.js" defer></script>
 </head>
 <body>
-  <header><a class="brand" href="#"><img src="assets/icon.png" width="44" height="44" alt="">Magic Hinge</a><a href="https://github.com/roelvangils/magic-hinge">Source on GitHub <span aria-hidden="true">↗</span></a></header>
+  <header class="site-header"><nav aria-label="Main"><a class="brand" href="#"><img src="assets/icon.png" width="44" height="44" alt="">Magic Hinge</a><a class="source-link" href="https://github.com/roelvangils/magic-hinge"><img class="github-logo" src="assets/github.svg" alt="" width="20" height="20"> <span>Source on GitHub</span></a></nav></header>
   <main>
     <section class="hero" aria-labelledby="headline">
-      <p class="eyebrow">A SMALL DELIGHT FOR YOUR MAC</p>
-      <h1 id="headline">A little magic.<br>Every time you close it.</h1>
-      <p class="intro">Tilt your MacBook screen. Watch your desktop bend, soften and fade like frosted glass. Hold still, and everything settles back into place.</p>
-      <div class="download"><a id="download" class="button" hidden>Download for Mac <span aria-hidden="true">↓</span></a><p id="release-status" role="status">Version 2.3.0 is being prepared.</p></div>
-      <p class="requirements">Free &amp; open source · Apple silicon · macOS 14.2 or later</p>
-      <figure><img src="assets/simulator.png" alt="Magic Hinge’s interactive MacBook simulator displaying the built-in abstract example image." width="1882" height="1344"><figcaption>The real app, using its built-in example image.</figcaption></figure>
+      <p class="eyebrow">A completely unnecessary upgrade to opening your laptop.</p>
+      <h1 id="headline">Open up to a little magic.</h1>
+      <p class="intro">Brings the iPhone Duo screen animation to your MacBook.</p>
+      <div class="download"><a id="download" class="button" hidden><img class="apple-logo" src="assets/apple.svg" alt="" width="20" height="24">Download 0.9 Beta for macOS</a><p id="release-status" class="visually-hidden" role="status">Magic Hinge 0.9 Beta is being prepared.</p></div>
+      <p class="requirements">Public beta · Free &amp; open source · Apple Notarized · macOS 14.2 or later</p>
     </section>
-    <section class="details" aria-label="How it works">
-      <article><span class="number">01 / MOVE</span><h2>Follow the hinge.</h2><p>A readable hinge sensor connects the effect to your MacBook’s movement. Pause it anytime from the menu bar. External displays stay clear.</p></article>
-      <article><span class="number">02 / PLAY</span><h2>Try it without a sensor.</h2><p>Drag the 3D laptop, use the angle slider, or press the arrow keys. Double-click to open or close. Hold Shift to slow down the transition.</p></article>
-      <article><span class="number">03 / RELAX</span><h2>Your desktop stays yours.</h2><p>Screen images stay in your Mac’s memory. They are never saved or uploaded. No analytics, no account, and no accessibility permission required.</p></article>
+    <section class="hinge-story" aria-label="MacBook Air opening animation" data-sequence="assets/air-front-light-71baf01d54b9/sequence.json" data-dark-sequence="assets/air-front-dark-9a4e4c0598a0/sequence.json">
+      <div class="hinge-stage">
+        <figure class="hinge-visual">
+          <img id="hinge-poster" src="assets/air-front-light-71baf01d54b9/frame-029.webp" alt="A silver 13-inch MacBook Air opening to reveal the Magic Hinge glass effect." width="1440" height="1000">
+          <canvas id="hinge-canvas" width="1440" height="1000" aria-hidden="true" hidden></canvas>
+          <button class="play-scroll" type="button" aria-label="Open the MacBook" hidden></button>
+          <figcaption class="story-caption"><span id="story-copy">Your desktop, with a little magic.</span><span id="scroll-hint" hidden>Scroll to open <span aria-hidden="true">↓</span></span></figcaption>
+        </figure>
+      </div>
+    </section>
+    <p class="hinge-warning">WARNING: This utility may cause an <strong>irresistible urge</strong> to open and close your MacBook repeatedly. We accept no responsibility for any resulting wear and tear on your MacBook’s hinge.</p>
+    <section class="details" id="features" aria-label="How it works">
+      <article><span class="number">01 / CHANNEL YOUR INNER CRAIG</span><h2>Craig mode. Activated.</h2><img class="feature-image" src="assets/feature-preview.png" alt="" width="1312" height="738" loading="lazy" decoding="async"><p>Add the addictive iPhone Duo animation to your MacBook, free of charge. It has absolutely no business being this satisfying.</p></article>
+      <article><span class="number">02 / JUST ONE MORE TIME</span><h2>Open. Close. Repeat.</h2><img class="feature-image" src="assets/feature-sketch.png" alt="" width="1536" height="1024" loading="lazy" decoding="async"><p>The iPhone Duo screen animation has absolutely no business being so satisfying. That's why we brought it to the Mac.</p></article>
+      <article><span class="number">03 / CALL IT A DAY</span><h2>Close it. Duo Style.</h2><img class="feature-image" src="assets/feature-close.png" alt="" width="1504" height="866" loading="lazy" decoding="async"><p>Finished working? Shut the lid and enjoy one last little moment of delight. Almost makes you want to finish work early.</p></article>
     </section>
     <section class="installation" aria-labelledby="install-title">
       <div><p class="eyebrow">MAKE YOURSELF AT HOME</p><h2 id="install-title">One small app.<br>Two ways to install.</h2><p>Open the disk image and drag Magic Hinge into Applications. Or use Homebrew:</p></div>
       <div><div class="terminal"><code id="brew-command">brew install --cask roelvangils/tap/magic-hinge</code><button id="copy" type="button">Copy</button></div><p id="copy-status" role="status" aria-live="polite"></p><p class="fine">The app speaks English and Dutch. Screen Recording is optional; the simulator works with an example image. Models download directly from Apple and remain available offline after downloading.</p></div>
     </section>
+    <p class="fine">This is an early public beta. macOS 14.2 is the deployment target; testing on that exact version and the full hardware, permissions and VoiceOver test matrix are still pending. <a href="https://github.com/roelvangils/magic-hinge/issues">Report a bug on GitHub</a>.</p>
     <section class="privacy" aria-labelledby="privacy-title"><h2 id="privacy-title">Made to feel light.</h2><p>The effect clears on sleep, screen lock and sensor loss. It does not prevent sleep or draw over the secure login screen. Update checks are optional; automatic downloads and installation are off.</p><p class="fine">Automatic hinge control depends on the sensor available in your Mac, detected at runtime. The simulator remains available when no sensor is readable.</p><details><summary>Credits &amp; licenses</summary><p>Magic Hinge by Roel Van Gils. Original code under the MIT license. Apple supplies the original 3D models; Apple’s terms apply. Wallpapers by <a href="https://basicappleguy.com/haberdashery/iphone-duo-wallpaper">Basic Apple Guy</a>, used with permission. Studio lighting from <a href="https://polyhaven.com/a/studio_small_09">Poly Haven</a> (CC0). Updates by Sparkle; permission guidance by PermissionFlow.</p><p>Third-party assets are excluded from the code’s MIT license. See the <a href="https://github.com/roelvangils/magic-hinge/blob/main/CREDITS.md">complete credits and terms</a>.</p></details></section>
   </main>
-  <footer><span>Magic Hinge · Made by Roel Van Gils</span><a href="https://github.com/roelvangils/magic-hinge/issues">Report an issue</a><span id="version"></span></footer>
+  <footer id="footer">
+    <div class="footer-links"><span>Magic Hinge · Made by Roel Van Gils</span><a href="https://github.com/roelvangils/magic-hinge/issues">Report an issue</a><span id="version"></span></div>
+    <div class="footer-preferences" aria-label="Website preferences">
+      <fieldset><legend>Reduce Motion</legend><div class="segments">
+        <label><input type="radio" name="motion" value="on"><span>On</span></label>
+        <label><input type="radio" name="motion" value="off" checked><span>Off</span></label>
+      </div></fieldset>
+      <fieldset><legend>Dark Mode</legend><div class="segments">
+        <label><input type="radio" name="theme" value="auto" checked><span>Auto</span></label>
+        <label><input type="radio" name="theme" value="light"><span>Light</span></label>
+        <label><input type="radio" name="theme" value="dark"><span>Dark</span></label>
+      </div></fieldset>
+    </div>
+</footer>
 </body>
 </html>

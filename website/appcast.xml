@@ -4,11 +4,11 @@
     <title>Magic Hinge</title>
     <link>https://roelvangils.github.io/magic-hinge/</link>
     <item>
-      <title>Magic Hinge 2.3.0</title>
-      <sparkle:version>38</sparkle:version>
-      <sparkle:shortVersionString>2.3.0</sparkle:shortVersionString>
+      <title>Magic Hinge 0.9 Beta</title>
+      <sparkle:version>39</sparkle:version>
+      <sparkle:shortVersionString>0.9.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>14.2</sparkle:minimumSystemVersion>
-      <enclosure url="https://github.com/roelvangils/magic-hinge/releases/download/v2.3.0/Magic-Hinge-2.3.0.dmg" length="25625996" type="application/octet-stream" sparkle:edSignature="vhFlwgLmY8s+jmB/MEd39lRwE7/1kGi5cUgossbs+BWFtzgpiXEZwS4TeddsLLtJiYZNneWismLqLrjl4PRhBQ==" />
+      <enclosure url="https://github.com/roelvangils/magic-hinge/releases/download/v0.9.0/Magic-Hinge-0.9.0.dmg" length="33261403" type="application/octet-stream" sparkle:edSignature="5UY7YEeNJ0WzEZDPAlDQ1v38EEIoZNKFP7veIw8f151LGEj9b+JPiyWLTNE25amidnd97noZG/uosw6LPQVZCQ==" />
     </item>
   </channel>
 </rss>

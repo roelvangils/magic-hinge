@@ -6,7 +6,7 @@ struct AboutView: View {
         .flatMap { NSImage(contentsOf:$0) }
     private var version: String {
         L10n.format("Version %@ (%@)",
-            Bundle.main.object(forInfoDictionaryKey:"CFBundleShortVersionString") as? String ?? "—",
+            Bundle.main.object(forInfoDictionaryKey:"MagicHingeDisplayVersion") as? String ?? Bundle.main.object(forInfoDictionaryKey:"CFBundleShortVersionString") as? String ?? "—",
             Bundle.main.object(forInfoDictionaryKey:"CFBundleVersion") as? String ?? "—")
     }
     var body: some View {

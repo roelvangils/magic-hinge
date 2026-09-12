@@ -1,6 +1,15 @@
+# Public beta status
+
+The owner authorized the first public release as **0.9 Beta** (internal version
+0.9.0, build 39), superseding the planned stable 2.3.0 publication. The open
+checks below remain requirements for a stable release; they are disclosed for
+this experimental prerelease. Historical 2.3.0 artifacts must not be published.
+
 # Magic Hinge 2.3.0 — release review
 
-Status: **release candidate, not published**. Reviewed and built 12 September 2026
+Status: **release candidate, not published**. The current source includes newer
+custom light/dark example screenshots; the previously frozen DMG does not include
+this change and must be regenerated before publication. Reviewed and built 12 September 2026
 on Apple silicon, macOS 27.0, Swift 6.4 / Xcode 27 SDK. The deployment target is
 14.2; it is not evidence of running successfully on macOS 14.2.
 
@@ -41,8 +50,9 @@ lock-screen code. PermissionFlow 2.11.2 and Sparkle 2.9.6 are pinned in
 
 Original icon, MIT license, third-party credits and terms, privacy explanation,
 English README, asset inventory, release scripts and public-safe CI are present.
-The responsive GitHub Pages site includes a real example-image screenshot and a
-working Homebrew copy button. Final download metadata is generated from the signed, notarized, stapled DMG.
+The responsive GitHub Pages site includes a 121-frame, scroll-driven silver
+13-inch MacBook Air sequence rendered using the shared model and glass shader,
+and a working Homebrew copy button. The former app screenshot has been replaced. Final download metadata is generated from the signed, notarized, stapled DMG.
 The public download URL remains unpublished until the remaining gates pass.
 
 ## Verified locally
@@ -67,8 +77,12 @@ The public download URL remains unpublished until the remaining gates pass.
   network access was available to that process. Offline screenshot inspected.
 - The website was checked at 1440 px desktop and 390 px mobile, light/dark,
   without horizontal overflow. Homebrew copy writes the exact command. All local
-  page resources resolve. Screenshot contents were inspected: only the built-in
-  example image, no personal desktop content.
+  page resources resolve. The original screenshot contained only the built-in
+  example image. The replacement sequence was checked at closed/mid/open scroll
+  positions, with Reduced Motion and explicit opt-in; no browser errors or mobile
+  horizontal overflow. Frames now use the maintainer-supplied light/dark screenshots, explicitly
+  authorized for the website. No live desktop capture occurs during rendering.
+  Custom wallpaper and sky-blue enclosure generation also completed successfully.
 - Source audit finds no private-key/token patterns, personal absolute paths,
   builds, cached models or generated release artifacts among commit candidates.
 
@@ -121,3 +135,20 @@ and terms. Original wallpaper resolution, meshes and textures are retained.
 Current `spctl --assess` result for the app, installed app and DMG:
 **accepted — Notarized Developer ID**. No
 quarantine attribute or system security policy was removed to conceal this.
+
+### Custom screenshot follow-up
+
+The simulator still defaults to the real desktop (subject to Screen Recording
+permission). The shared ExampleScreen loader supplies the owner-provided light/dark
+PNGs for onboarding and when Desktop is disabled. Effective app appearance selects
+the variant. The website uses the light screenshot with silver and the dark screenshot
+with a custom Space Gray render finish. Both 121-frame sequences were regenerated;
+resource decoding/difference test and packaged-original comparisons passed.
+
+## 0.9 Beta build 39 verification
+
+- Clean arm64 distribution build and full local test suite passed, including the Apple model fixtures.
+- App and DMG accepted by Apple notarization; tickets stapled and Gatekeeper accepted both.
+- Final DMG: 33261403 bytes; SHA-256 `338bc3cb7e3a673025dc978ab6761c7ca16934b86f0d9d777e5fbf8907cf9606`.
+- Website data and appcast generated from the final signed DMG.
+- macOS 14.2 runtime and manual hardware/permissions/VoiceOver checks remain pending and are disclosed as beta limitations.

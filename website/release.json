@@ -1,9 +1,11 @@
 {
-  "version": "2.3.0",
-  "build": 38,
+  "displayVersion": "0.9 Beta",
+  "prerelease": true,
+  "version": "0.9.0",
+  "build": 39,
   "minimumSystemVersion": "14.2",
-  "url": "https://github.com/roelvangils/magic-hinge/releases/download/v2.3.0/Magic-Hinge-2.3.0.dmg",
-  "sha256": "4c9abe541449bc8c8a9b2385845d35e1be080c2c87f8003bc40ed1baacba7247",
-  "length": 25625996,
-  "signature": "vhFlwgLmY8s+jmB/MEd39lRwE7/1kGi5cUgossbs+BWFtzgpiXEZwS4TeddsLLtJiYZNneWismLqLrjl4PRhBQ=="
+  "url": "https://github.com/roelvangils/magic-hinge/releases/download/v0.9.0/Magic-Hinge-0.9.0.dmg",
+  "sha256": "338bc3cb7e3a673025dc978ab6761c7ca16934b86f0d9d777e5fbf8907cf9606",
+  "length": 33261403,
+  "signature": "5UY7YEeNJ0WzEZDPAlDQ1v38EEIoZNKFP7veIw8f151LGEj9b+JPiyWLTNE25amidnd97noZG/uosw6LPQVZCQ=="
 }

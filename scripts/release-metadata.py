@@ -11,13 +11,13 @@ assert len(base64.b64decode(signature,validate=True))==64
 subprocess.run([str(tool),'--account',r['sparkleKeyAccount'],'--verify',str(dmg),signature],check=True)
 sha=hashlib.sha256(dmg.read_bytes()).hexdigest();url=f'https://github.com/{r["repository"]}/releases/download/v{r["version"]}/{dmg.name}'
 (dmg.parent/'SHA256SUMS').write_text(f'{sha}  {dmg.name}\n')
-data=dict(version=r['version'],build=r['build'],minimumSystemVersion=r['minimumSystemVersion'],url=url,sha256=sha,length=dmg.stat().st_size,signature=signature)
+data=dict(displayVersion=r.get('displayVersion',r['version']),prerelease=r.get('prerelease',False),version=r['version'],build=r['build'],minimumSystemVersion=r['minimumSystemVersion'],url=url,sha256=sha,length=dmg.stat().st_size,signature=signature)
 (dmg.parent/'release-final.json').write_text(json.dumps(data,indent=2)+'\n')
 Path('website/release.json').write_text(json.dumps(data,indent=2)+'\n')
 ns='http://www.andymatuschak.org/xml-namespaces/sparkle';ET.register_namespace('sparkle',ns)
 rss=ET.Element('rss',version='2.0');channel=ET.SubElement(rss,'channel')
 ET.SubElement(channel,'title').text='Magic Hinge';ET.SubElement(channel,'link').text=r['website']
-item=ET.SubElement(channel,'item');ET.SubElement(item,'title').text='Magic Hinge '+r['version']
+item=ET.SubElement(channel,'item');ET.SubElement(item,'title').text='Magic Hinge '+r.get('displayVersion',r['version'])
 ET.SubElement(item,'{'+ns+'}version').text=str(r['build'])
 ET.SubElement(item,'{'+ns+'}shortVersionString').text=r['version']
 ET.SubElement(item,'{'+ns+'}minimumSystemVersion').text=r['minimumSystemVersion']
@@ -28,7 +28,7 @@ cask=f'''cask "magic-hinge" do
   sha256 "{sha}"
 
   url "{url}"
-  name "Magic Hinge"
+  name "Magic Hinge {r.get('displayVersion',r['version'])}"
   desc "A frosted-glass desktop effect controlled by your MacBook hinge"
   homepage "{r['website']}"
 

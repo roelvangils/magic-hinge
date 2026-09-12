@@ -11,10 +11,11 @@ let package = Package(
         .package(url: "https://github.com/sparkle-project/Sparkle.git", exact: "2.9.6")
     ],
     targets: [
+        .executableTarget(name: "WebsiteFrames", dependencies: ["DuoSimulation", "DuoGraphics"], path: "Tools/WebsiteFrames"),
         .target(name: "DuoCore", resources: [.process("Resources")]),
         .target(name: "DuoHardware", dependencies: ["DuoCore"]),
         .target(name: "DuoGraphics", dependencies: ["DuoCore"], resources: [.copy("Resources/Fold.metal")]),
-        .target(name: "DuoSimulation", dependencies: ["DuoCore", "DuoGraphics"], resources: [.copy("Resources/studio_small_09_1k.hdr"), .copy("Resources/AppleModels.json"), .copy("Resources/snap.aiff")]),
+        .target(name: "DuoSimulation", dependencies: ["DuoCore", "DuoGraphics"], resources: [.copy("Resources/ExampleScreens"), .copy("Resources/studio_small_09_1k.hdr"), .copy("Resources/AppleModels.json"), .copy("Resources/snap.aiff")]),
         .executableTarget(name: "MagicHinge", dependencies: ["DuoCore", "DuoHardware", "DuoGraphics", "DuoSimulation", .product(name: "PermissionFlow", package: "PermissionFlow"), .product(name: "PermissionFlowScreenRecordingStatus", package: "PermissionFlow"), .product(name: "Sparkle", package: "Sparkle")], exclude:["Resources/DesertWallpaper.jpg", "Resources/DuoNight.jpg"], resources: [.copy("Resources/BasicAppleGuy.png"), .copy("Resources/DuoDay.jpg"), .copy("Resources/DuoNightStarless.jpg"), .process("Resources/en.lproj"), .process("Resources/nl.lproj")]),
         .testTarget(name: "MagicHingeTests", dependencies: ["MagicHinge"]),
         .testTarget(name: "DuoCoreTests", dependencies: ["DuoCore"]),

@@ -14,6 +14,10 @@ assert 'minos 14.2' in load and '@executable_path/../Frameworks' in load
 assert (app/'Contents/Frameworks/Sparkle.framework/Versions/Current').is_symlink()
 for bundle in ['MagicHinge_DuoCore','MagicHinge_DuoGraphics','MagicHinge_DuoSimulation','MagicHinge_MagicHinge','PermissionFlow_PermissionFlow']:
     assert (app/f'Contents/Resources/{bundle}.bundle').is_dir(), bundle
+for appearance in ('light','dark'):
+    source=Path('Sources/DuoSimulation/Resources/ExampleScreens')/(appearance+'.png')
+    copies=list((app/'Contents/Resources/MagicHinge_DuoSimulation.bundle').rglob('ExampleScreens/'+appearance+'.png'))
+    assert len(copies)==1 and copies[0].read_bytes()==source.read_bytes(), appearance+' example screenshot'
 permission_bundle=app/'Contents/Resources/PermissionFlow_PermissionFlow.bundle'
 permission_resources=permission_bundle/'Contents/Resources' if (permission_bundle/'Contents/Resources').is_dir() else permission_bundle
 assert (permission_resources/'nl.lproj/Localizable.strings').is_file()

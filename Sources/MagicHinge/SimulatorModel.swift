@@ -50,6 +50,7 @@ final class SimulatorModel: ObservableObject {
     private var settings = FoldSettings()
     private var captureTask: Task<Void,Never>?
     private var usingDemo = true
+    private var exampleIsDark = false
     private var hintHiddenUntil = 0.0
     private var hintTask: Task<Void,Never>?
     private var sourceFadeStarted: Double?
@@ -73,7 +74,7 @@ final class SimulatorModel: ObservableObject {
         _ = session.receive(angle: angle, at: lastTick)
         do {
             let renderer = try FoldRenderer()
-            try renderer.setImage(DemoArtwork.make(width:1536,height:1000))
+            try renderer.setImage(ExampleScreen.image(dark:exampleIsDark))
             self.renderer = renderer
         } catch { self.error = error.localizedDescription }
         systemAppearanceObserver = DistributedNotificationCenter.default()
@@ -146,7 +147,7 @@ final class SimulatorModel: ObservableObject {
                 self.view?.scene = newLaptop.scene; self.view?.pointOfView = newLaptop.camera
                 self.view?.setAccessibilityLabel(L10n.format("Interactive 3D model of %@", requested.title))
                 if self.usingDemo {
-                    try self.renderer?.setImage(DemoArtwork.make(width:1536,height:Int(1536/newLaptop.screenAspectRatio)))
+                    try self.renderer?.setImage(ExampleScreen.image(dark:self.exampleIsDark))
                 }
                 self.lastTextureDegrees = nil
                 self.updateTexture(degrees:self.effectEnabled ? self.session.degrees : 0)
@@ -250,6 +251,15 @@ final class SimulatorModel: ObservableObject {
         view?.needsDisplay = true
         startClock()
     }
+    func setExampleAppearance(dark: Bool) {
+        guard exampleIsDark != dark else { return }
+        exampleIsDark = dark
+        guard usingDemo else { return }
+        do {
+            try renderer?.setImage(ExampleScreen.image(dark:dark),crossfade:true)
+            beginSourceFade()
+        } catch { self.error = error.localizedDescription }
+    }
     func setDesktopEnabled(_ enabled: Bool) {
         guard !demoOnly else { return }
         usesDesktop = enabled
@@ -259,7 +269,7 @@ final class SimulatorModel: ObservableObject {
         if enabled { refreshDesktop() }
         else {
             do {
-                try renderer?.setImage(DemoArtwork.make(width:1536,height:Int(1536/laptop.screenAspectRatio)),crossfade:true)
+                try renderer?.setImage(ExampleScreen.image(dark:exampleIsDark),crossfade:true)
                 usingDemo = true; beginSourceFade()
             } catch { self.error = error.localizedDescription }
         }
@@ -298,7 +308,7 @@ final class SimulatorModel: ObservableObject {
         textureGeneration = UUID()
         laptop.screenMaterial.diffuse.contents = NSColor.black
         renderer?.clearImage()
-        do { try renderer?.setImage(DemoArtwork.make(width:1536,height:Int(1536/laptop.screenAspectRatio))) }
+        do { try renderer?.setImage(ExampleScreen.image(dark:exampleIsDark)) }
         catch { self.error = error.localizedDescription }
         usingDemo = true; sourceFadeStarted = nil; lastTextureDegrees = nil
         updateTexture(degrees: 0)
