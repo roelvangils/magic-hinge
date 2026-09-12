@@ -24,17 +24,20 @@
 .hero h1{--title-start:#152a43;--title-seam:#2a4463;--title-middle:#355170;--title-end:#6485ac;--title-ink:#243e5e}
 [data-theme="dark"] .hero h1{--title-start:#8dabcc;--title-seam:#a0bbd8;--title-middle:#abc4df;--title-end:#d8e6f5;--title-ink:#b5cce5}
 .title-words{display:inline}
-.title-word{position:relative;display:inline-block;white-space:nowrap;color:#d2d2d7;--title-gradient:linear-gradient(100deg,color-mix(in srgb,var(--title-start),var(--title-end) var(--word-start)),color-mix(in srgb,var(--title-start),var(--title-end) var(--word-end)))}
-.title-word::after{content:attr(data-word);position:absolute;inset:0;padding:inherit;color:var(--title-ink)}
+.title-word{position:relative;display:inline-block;white-space:nowrap;color:transparent;--title-gradient:linear-gradient(100deg,color-mix(in srgb,var(--title-start),var(--title-end) var(--word-start)),color-mix(in srgb,var(--title-start),var(--title-end) var(--word-end)))}
+.title-word::before,.title-word::after{content:attr(data-word);position:absolute;inset:0;padding:inherit;color:var(--title-ink)}
+.title-word::before{display:none;color:#d2d2d7}
 @supports ((background-clip:text) or (-webkit-background-clip:text)){
   .title-word::after{background:var(--title-gradient);background-clip:text;-webkit-background-clip:text;color:transparent}
 }
-:root[data-reduce-motion="off"] .title-word::after{-webkit-mask-size:100% 300%;mask-size:100% 300%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;animation-duration:2000ms;animation-timing-function:ease-in-out;animation-fill-mode:both}
+:root[data-reduce-motion="off"] .title-word::before,:root[data-reduce-motion="off"] .title-word::after{display:block;-webkit-mask-size:100% 300%;mask-size:100% 300%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;animation-duration:2000ms;animation-timing-function:ease-in-out;animation-fill-mode:both}
 :root[data-reduce-motion="off"] .title-word:nth-child(odd)::after{-webkit-mask-image:linear-gradient(to bottom,#000 33.333%,transparent 66.667%);mask-image:linear-gradient(to bottom,#000 33.333%,transparent 66.667%);animation-name:title-fill-down}
 :root[data-reduce-motion="off"] .title-word:nth-child(even)::after{-webkit-mask-image:linear-gradient(to bottom,transparent 33.333%,#000 66.667%);mask-image:linear-gradient(to bottom,transparent 33.333%,#000 66.667%);animation-name:title-fill-up}
+:root[data-reduce-motion="off"] .title-word:nth-child(odd)::before{-webkit-mask-image:linear-gradient(to bottom,transparent 33.333%,#000 66.667%);mask-image:linear-gradient(to bottom,transparent 33.333%,#000 66.667%);animation-name:title-fill-down}
+:root[data-reduce-motion="off"] .title-word:nth-child(even)::before{-webkit-mask-image:linear-gradient(to bottom,#000 33.333%,transparent 66.667%);mask-image:linear-gradient(to bottom,#000 33.333%,transparent 66.667%);animation-name:title-fill-up}
 @keyframes title-fill-down{from{-webkit-mask-position:0 100%;mask-position:0 100%}to{-webkit-mask-position:0 0;mask-position:0 0}}
 @keyframes title-fill-up{from{-webkit-mask-position:0 0;mask-position:0 0}to{-webkit-mask-position:0 100%;mask-position:0 100%}}
-@media(forced-colors:active){.title-word{background:none!important;color:CanvasText!important;-webkit-text-fill-color:CanvasText}.title-word::after{display:none}}
+@media(forced-colors:active){.title-word{background:none!important;color:CanvasText!important;-webkit-text-fill-color:CanvasText;animation:none!important}.title-word::before,.title-word::after{display:none!important}}
 
 /* Keep the eyebrow close to the headline and give the download more breathing room. */
 .hero > .eyebrow + h1{margin-top:8px}

@@ -136,6 +136,8 @@ The entire hero title starts with fully visible, stationary light-gray letters.
 All six words fill simultaneously over two seconds with identical easing.
 Open, to and little fill top to bottom; up, a and magic. fill bottom to top.
 Opposing CSS masks provide soft fade edges over the gray base letters without
-moving the text. Word gradients continue the heading's ink-to-steel palette.
+moving the text. An inverse mask removes gray at exactly the same moving fade boundary that
+reveals the color. No gray layer remains visible after completion, avoiding
+antialiasing fringes. Word gradients continue the heading's ink-to-steel palette.
 The heading retains one accessible name. The site Reduce Motion control shows
 the final colored title immediately; forced colors uses ordinary system text.
