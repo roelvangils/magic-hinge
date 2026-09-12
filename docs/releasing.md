@@ -68,6 +68,17 @@ requires a new signing/notarization cycle and regenerated metadata.
 The owner tests opening, closing, stillness, sleep/wake, clamshell and emergency
 stop on the candidate. Record the build and result in the release report.
 
+Prepare notarized fixtures with:
+
+```sh
+python3 scripts/prepare-update-test.py --root build/update-notarized --base-build 200 --notarize
+python3 -m http.server 8766 --bind 127.0.0.1 --directory build/update-notarized/served
+```
+
+Use a fresh fixture root for each run. Only the isolated UpdateTest bundle uses
+this loopback HTTP feed; production remains HTTPS. Launch the installed fixture,
+check for updates, install, and confirm the incremented build after relaunch.
+
 Perform an actual Sparkle installation between two separately signed internal
 builds with increasing CFBundleVersion and a private test feed. Verify that the
 new app relaunches with existing preferences. Corrupt a COPY of the signed DMG

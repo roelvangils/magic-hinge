@@ -12,7 +12,7 @@ on Apple silicon, macOS 27.0, Swift 6.4 / Xcode 27 SDK. The deployment target is
 | High | Static AR occlusion shells in Pro 16, Sky Blue Air and Neo inflated interaction/contact bounds. | Exclude non-lid shells spanning the original open display; retain actual geometry. | All official model renders, contact frames and bounded base-height regression pass. |
 | High | Global key-down monitoring conflicted with the no-Input-Monitoring permission contract. | Remove global monitor. Escape remains app-local; stillness and menu pause remain. | Source inspection, existing input regressions; no global monitor in production source. |
 | High | A simulator desktop texture could survive permission revocation/lock or return from an old GPU completion. | Clear captured materials and GPU images immediately; invalidate pending texture generations; cancel capture. Recheck permission/session and capture generation before returning pixels. | Code path review and capture/render tests; full real TCC revoke/restart matrix remains a release gate. |
-| High | Original distribution signing used an identifier-only designated requirement. | Clean arm64 distribution build; standard Developer ID chain, hardened runtime, timestamps, inside-out nested Sparkle signing. | `codesign --verify --deep --strict`, team/requirement/rpath/architecture/resource checks pass. Gatekeeper still rejects the unnotarized candidate, as expected. |
+| High | Original distribution signing used an identifier-only designated requirement. | Clean arm64 distribution build; standard Developer ID chain, hardened runtime, timestamps, inside-out nested Sparkle signing. | `codesign --verify --deep --strict`, team/requirement/rpath/architecture/resource checks pass. App and final DMG are notarized/stapled; Gatekeeper accepts both. |
 | Medium | Notification ownership and the display-clock observer lacked explicit balanced cleanup. | SessionLifecycle owns registration centers/tokens and local keys. DesktopEffect owns overlay/clock/cursor; PermissionService owns permission refresh. Remove clock observer on deallocation. | Review, application launch and cursor balance regression tests. |
 | Medium | Older canceled capture warmup could clear a newer task handle; stale sensor callbacks could arrive while locked. | Generation-check warmup cleanup and reject readings outside an active session. | Review and full motion/filter regressions. |
 | Medium | Hidden simulator could continue loading/parsing and the main simulator stayed active under onboarding. | Cancel asset requests on hide; suspend main simulator while guide is open. Share controller/renderer/adapters with the guide. | App launch, three-step guide navigation, full simulator regressions. |
@@ -42,8 +42,8 @@ lock-screen code. PermissionFlow 2.11.2 and Sparkle 2.9.6 are pinned in
 Original icon, MIT license, third-party credits and terms, privacy explanation,
 English README, asset inventory, release scripts and public-safe CI are present.
 The responsive GitHub Pages site includes a real example-image screenshot and a
-working Homebrew copy button. It has no final download metadata until a signed,
-notarized, stapled DMG is frozen. No dummy checksum, signature or release is used.
+working Homebrew copy button. Final download metadata is generated from the signed, notarized, stapled DMG.
+The public download URL remains unpublished until the remaining gates pass.
 
 ## Verified locally
 
@@ -79,9 +79,8 @@ and terms. Original wallpaper resolution, meshes and textures are retained.
 
 - Previous app: 31.3 MiB on disk; current signed app: approximately **27.0 MiB**,
   including approximately **3.0 MiB** for Sparkle.
-- Current signed, **unnotarized RC2 DMG**: **25,622,920 bytes (24.4 MiB)**. This is a
-  test artifact, not the final download. The final notarized/stapled size remains
-  to be measured and recorded.
+- Final signed, notarized and stapled DMG: **25,625,996 bytes (24.4 MiB)**.
+  SHA-256: `4c9abe541449bc8c8a9b2385845d35e1be080c2c87f8003bc40ed1baacba7247`.
 - All official model fixtures including color layers: approximately **87.3 MiB**.
   Normal per-user cache size depends on the models actually requested.
 - Excluding unused `DuoNight.jpg` removes 10,138,610 bytes (about 9.7 MiB); it
@@ -92,15 +91,22 @@ and terms. Original wallpaper resolution, meshes and textures are retained.
 
 ## Release gates still open — do not publish
 
-1. Local `magic-hinge` notarytool Keychain profile is absent. The owner has been
-   asked to configure it locally. No Apple password was read, stored in source or
-   supplied through chat. App and final DMG must be accepted and stapled.
+1. **Passed:** local `magic-hinge` Keychain authentication, app and DMG notarization,
+   stapling, strict signatures and Gatekeeper. App submission
+   `84f8d30c-56a4-4b0a-936e-c05c97cc4a3d`; DMG submission
+   `1afdbc34-7bd6-4bf8-93fd-c7b72420eea0`. Apple logs retained locally.
+   The app installed from this DMG also passes Gatekeeper and stapling.
 2. The new Sparkle key is generated in Keychain and its public key is embedded.
    The isolated internal update fixtures are signed with Developer ID. EdDSA
-   archive signing currently waits for local Keychain authorization to
-   `sign_update`. The actual two-build install/relaunch and corrupt-update
-   rejection have **not** passed yet. Non-notarized fixture success alone will
-   not replace the production-policy test after notarization.
+   signatures verify and reject a corrupted archive. The in-app 100 → 101
+   installation/relaunch succeeded; an in-app corrupted update was rejected
+   with “The update is improperly signed and could not be validated.”
+   **Passed:** notarized/stapled builds 200 → 201 installed and relaunched;
+   the isolated preference sentinel survived. Gatekeeper and stapling pass on
+   the updated app. A corrupted archive was rejected in-app with the same
+   signature error, leaving build 201 installed. Evidence: local
+   `build/update-notarized/signature-test.json` and `corrupt-update-ui.txt`.
+   The loopback feed isolates this test; public HTTPS delivery is still pending.
 3. A **macOS 14.2 runtime machine/VM** has not been supplied. This is an explicit
    release blocker, not an optional check.
 4. The owner's physical opening/closing, stillness, sleep/wake, clamshell and
@@ -112,5 +118,6 @@ and terms. Original wallpaper resolution, meshes and textures are retained.
    Homebrew install/upgrade/uninstall and the re-downloaded artifact's Gatekeeper
    check therefore remain pending.
 
-Current `spctl --assess` result: **rejected — Unnotarized Developer ID**. No
+Current `spctl --assess` result for the app, installed app and DMG:
+**accepted — Notarized Developer ID**. No
 quarantine attribute or system security policy was removed to conceal this.

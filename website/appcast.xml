@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+  <channel>
+    <title>Magic Hinge</title>
+    <link>https://roelvangils.github.io/magic-hinge/</link>
+    <item>
+      <title>Magic Hinge 2.3.0</title>
+      <sparkle:version>38</sparkle:version>
+      <sparkle:shortVersionString>2.3.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.2</sparkle:minimumSystemVersion>
+      <enclosure url="https://github.com/roelvangils/magic-hinge/releases/download/v2.3.0/Magic-Hinge-2.3.0.dmg" length="25625996" type="application/octet-stream" sparkle:edSignature="vhFlwgLmY8s+jmB/MEd39lRwE7/1kGi5cUgossbs+BWFtzgpiXEZwS4TeddsLLtJiYZNneWismLqLrjl4PRhBQ==" />
+    </item>
+  </channel>
+</rss>
