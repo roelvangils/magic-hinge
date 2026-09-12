@@ -67,6 +67,9 @@ fetch('release.json').then(response => {
   const boundsContext = boundsCanvas.getContext('2d', {willReadFrequently:true});
   function drawFrame(image) {
     const background = manifest.background || (theme === 'dark' ? '1d1d1f' : 'f5f5f7');
+    // Use one scale throughout the sequence; even the full source height fits
+    // with a safety margin, so the opening animation never clips or pulses in size.
+    const scale = Math.min(1, (canvas.height-120)/manifest.height);
     let offset = framing.get(image);
     if (offset === undefined) {
       boundsContext.drawImage(image,0,0,288,200);
@@ -77,17 +80,17 @@ fetch('release.json').then(response => {
         let occupied = 0;
         for (let x=0; x<288; x++) {
           const i = (y*288+x)*4;
-          // Ignore near-background pixels and the faint floating shadow.
-          if (Math.max(Math.abs(pixels[i]-rgb[0]),Math.abs(pixels[i+1]-rgb[1]),Math.abs(pixels[i+2]-rgb[2])) > 40) occupied++;
+          // Include the floating shadow, excluding only near-background compression noise.
+          if (Math.max(Math.abs(pixels[i]-rgb[0]),Math.abs(pixels[i+1]-rgb[1]),Math.abs(pixels[i+2]-rgb[2])) > 8) occupied++;
         }
         if (occupied >= 6) { top = Math.min(top,y); bottom = y+1; }
       }
-      offset = bottom > top ? (canvas.height-(top+bottom)*manifest.height/200)/2 : 0;
+      offset = bottom > top ? (canvas.height-(top+bottom)*manifest.height/200*scale)/2 : 60;
       framing.set(image,offset);
     }
     context.fillStyle = '#'+background;
     context.fillRect(0,0,canvas.width,canvas.height);
-    context.drawImage(image,0,offset,manifest.width,manifest.height);
+    context.drawImage(image,(canvas.width-manifest.width*scale)/2,offset,manifest.width*scale,manifest.height*scale);
   }
   const cache = new Map();
   const failed = new Set();
