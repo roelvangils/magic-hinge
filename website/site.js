@@ -43,20 +43,24 @@ fetch('release.json').then(response => {
   let previewFrame;
   const manifests = new Map();
   try {
-    for (const path of [story.dataset.sequence, story.dataset.darkSequence]) {
-      const url = new URL(path, location.href);
-      const response = await fetch(url);
-      if (!response.ok) return;
-      manifests.set(url.href, await response.json());
+    for (const [scrollPath,idlePath] of [[story.dataset.sequence,story.dataset.idleSequence],[story.dataset.darkSequence,story.dataset.darkIdleSequence]]) {
+      const sequences = await Promise.all([scrollPath,idlePath].map(async path => {
+        const url = new URL(path,location.href);
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Sequence unavailable');
+        const m = await response.json();
+        if (!Array.isArray(m.frames) || m.frames.length < 2 || m.frames.length > 361 ||
+            !m.frames.every(name => /^frame-\d{3}\.(jpg|webp)$/.test(name)) ||
+            !Number.isInteger(m.width) || m.width < 320 || m.width > 3840 ||
+            !Number.isInteger(m.height) || m.height < 240 || m.height > 2160 || !m.frames.includes(m.poster)) throw new Error('Invalid sequence');
+        return {...m, frames:m.frames.map(name => new URL(name,url).href), poster:new URL(m.poster,url).href};
+      }));
+      const [scroll,idle] = sequences;
+      if (scroll.width !== idle.width || scroll.height !== idle.height || idle.motion !== 'idle' || idle.maximumAngle !== 5) return;
+      manifests.set(new URL(scrollPath,location.href).href,{...scroll,scrollCount:scroll.frames.length,idleCount:idle.frames.length,frames:[...scroll.frames,...idle.frames]});
     }
     manifest = manifests.get(manifestURL.href);
-    for (const manifest of manifests.values()) {
-    if (!Array.isArray(manifest.frames) || manifest.frames.length <= firstFrame || manifest.frames.length > 361 ||
-        !manifest.frames.every(name => /^frame-\d{3}\.(jpg|webp)$/.test(name)) ||
-        !Number.isInteger(manifest.width) || manifest.width < 320 || manifest.width > 3840 ||
-        !Number.isInteger(manifest.height) || manifest.height < 240 || manifest.height > 2160 || !manifest.frames.includes(manifest.poster)) return;
-    }
-    if ([...manifests.values()].some(m => m.width !== manifest.width || m.height !== manifest.height || m.frames.length !== manifest.frames.length)) return;
+    if ([...manifests.values()].some(m => m.width !== manifest.width || m.height !== manifest.height || m.frames.length !== manifest.frames.length || m.scrollCount !== manifest.scrollCount)) return;
   } catch { return; }
   previewFrame = manifest.frames[firstFrame];
   poster.src = new URL(previewFrame,manifestURL).href;
@@ -64,15 +68,19 @@ fetch('release.json').then(response => {
   // Rendered frames have top-aligned artwork. Center the device, not its blank canvas.
   const framing = new WeakMap();
   const artworkTop = new WeakMap();
+  let idleFraming = null;
   const boundsCanvas = document.createElement('canvas');
   boundsCanvas.width = 288; boundsCanvas.height = 200;
   const boundsContext = boundsCanvas.getContext('2d', {willReadFrequently:true});
-  function drawFrame(image, opacity = 1, clear = true) {
+  function drawFrame(image, isIdle = false) {
     const background = manifest.background || (theme === 'dark' ? '1d1d1f' : 'f5f5f7');
     // Use one scale throughout the sequence; even the full source height fits
     // with a safety margin, so the opening animation never clips or pulses in size.
     const scale = Math.min(1, (canvas.height-120)/manifest.height);
     let offset = framing.get(image);
+    if (isIdle && idleFraming) {
+      offset = idleFraming.offset; artworkTop.set(image,idleFraming.top);
+    }
     if (offset === undefined) {
       boundsContext.drawImage(image,0,0,288,200);
       const pixels = boundsContext.getImageData(0,0,288,200).data;
@@ -90,34 +98,26 @@ fetch('release.json').then(response => {
       offset = bottom > top ? (canvas.height-(top+bottom)*manifest.height/200*scale)/2 : 60;
       framing.set(image,offset);
       artworkTop.set(image,offset+top*manifest.height/200*scale);
+      if (isIdle) idleFraming = {offset,top:artworkTop.get(image)};
     }
-    if (clear) {
-      context.fillStyle = '#'+background;
-      context.fillRect(0,0,canvas.width,canvas.height);
-    }
-    context.globalAlpha = opacity;
+    context.fillStyle = '#'+background;
+    context.fillRect(0,0,canvas.width,canvas.height);
     context.drawImage(image,(canvas.width-manifest.width*scale)/2,offset,manifest.width*scale,manifest.height*scale);
-    context.globalAlpha = 1;
   }
-  function positionPill(image, nextImage, blend = 0) {
+  function positionPill(image) {
     const height = Math.min(canvas.clientHeight,canvas.clientWidth*canvas.height/canvas.width);
     const firstTop = artworkTop.get(image) || 0;
-    const blendedTop = nextImage ? firstTop+((artworkTop.get(nextImage) ?? firstTop)-firstTop)*blend : firstTop;
-    const top = (canvas.clientHeight-height)/2 + height*blendedTop/canvas.height;
+    const top = (canvas.clientHeight-height)/2 + height*firstTop/canvas.height;
     pill.style.top = `${Math.max(4,top-44)}px`;
   }
   const cache = new Map();
   const failed = new Set();
   const loading = new Map();
   let target = 0, drawn = -1, scheduled = false, visible = false;
-  const last = manifest.frames.length - 1;
+  const last = manifest.scrollCount - 1;
   let broken = false, generation = 0;
   const enabled = () => !broken && root.dataset.reduceMotion !== 'on';
   let playback = 0, idleStarted = null, lastInteraction = performance.now();
-  const idleAngles = Array.from({length:firstFrame+1}, (_,index) => {
-    const t = index/(last*0.85);
-    return 110*t*t*(3-2*t);
-  });
   function stopPlayback() {
     lastInteraction = performance.now(); idleStarted = null;
     cancelAnimationFrame(playback);
@@ -128,7 +128,7 @@ fetch('release.json').then(response => {
     if (!enabled()) return;
     const headerHeight = document.querySelector('.site-header').offsetHeight;
     const rect = story.getBoundingClientRect();
-    const closing = target >= Math.round(last*0.85);
+    const closing = canvas.dataset.idle !== 'true' && target >= Math.round(last*0.85);
     const destination = closing ? 0 : rect.top + scrollY + rect.height - Math.max(280, innerHeight-headerHeight) - headerHeight;
     const from = scrollY;
     if (Math.abs(destination-from) < 1) return;
@@ -168,6 +168,11 @@ fetch('release.json').then(response => {
     // Coarse coverage first makes a quick jump useful, then fill all intermediate poses.
     const order = [firstFrame, last, 0, firstFrame-1];
     for (let i=firstFrame; i<=last; i+=8) order.push(i);
+    if (scrollY < 2) {
+      order.push(manifest.frames.length-1,last+1);
+      for (let i=last+1;i<manifest.frames.length;i+=12) order.push(i);
+      for (let i=last+1;i<manifest.frames.length;i++) order.push(i);
+    }
     for (let i=firstFrame; i<=last; i++) order.push(i);
     const token = generation;
     for (const index of order) {
@@ -206,7 +211,7 @@ fetch('release.json').then(response => {
   function update() {
     scheduled = false;
     if (theme !== root.dataset.theme) {
-      theme = root.dataset.theme; updateDescription(); generation++; resetDownloads();
+      theme = root.dataset.theme; updateDescription(); generation++; resetDownloads(); idleFraming = null;
       manifestURL = new URL(theme === 'dark' ? story.dataset.darkSequence : story.dataset.sequence,location.href);
       manifest = manifests.get(manifestURL.href); previewFrame = manifest.frames[firstFrame];
       poster.src = new URL(enabled() ? previewFrame : manifest.poster,manifestURL).href;
@@ -215,7 +220,7 @@ fetch('release.json').then(response => {
     }
     if (!enabled()) {
       stopPlayback(); play.hidden = true; pill.hidden = true; canvas.dataset.idle = 'false';
-      if (downloads.size) { generation++; resetDownloads(); loading.clear(); }
+      if (downloads.size) { generation++; resetDownloads(); idleFraming = null; loading.clear(); }
       story.classList.remove('is-animated'); canvas.hidden = true; poster.hidden = false;
       poster.src = new URL(manifest.poster,manifestURL).href;
       hint.hidden = true; caption.textContent = 'Your desktop, with a little magic.';
@@ -238,34 +243,28 @@ fetch('release.json').then(response => {
     const progress = Math.max(0,Math.min(1,(scrollY-start)/Math.max(1,end-start)));
     target = Math.round(firstFrame+(last-firstFrame)*progress);
     const idleEligible = visible && scrollY < 2 && !playback && document.visibilityState === 'visible';
-    let idleNext = null, idleBlend = 0;
     if (idleEligible && performance.now()-lastInteraction >= 1500) {
       idleStarted ??= performance.now();
-      const angle = 2.5*(1+Math.cos((performance.now()-idleStarted)*2*Math.PI/6000));
-      // Interpolate adjacent poses every display frame instead of holding each
-      // of the few near-closed source frames for hundreds of milliseconds.
-      idleNext = Math.max(1,idleAngles.findIndex(value => value >= angle));
-      target = idleNext-1;
-      idleBlend = (angle-idleAngles[target])/(idleAngles[idleNext]-idleAngles[target]);
+      const opening = (1+Math.cos((performance.now()-idleStarted)*2*Math.PI/6000))/2;
+      target = last+1+Math.round(opening*(manifest.idleCount-1));
     } else { idleStarted = null; }
-    canvas.dataset.idle = String(idleEligible && idleStarted !== null);
-
-    play.setAttribute('aria-label', target >= Math.round(last*0.85) ? 'Close the MacBook' : 'Open the MacBook');
+    const isIdle = idleEligible && idleStarted !== null;
+    canvas.dataset.idle = String(isIdle);
+    play.setAttribute('aria-label', !isIdle && target >= Math.round(last*0.85) ? 'Close the MacBook' : 'Open the MacBook');
     hint.hidden = progress > .12;
     caption.textContent = progress < .22 ? 'A glimpse of the magic. Keep scrolling.' : progress < .78 ? 'Watch your desktop turn to glass.' : '';
     if (!visible) return;
     // Keep the last good frame visible during a fast scroll or a failed request.
-    if (cache.has(target) && (target !== drawn || idleNext !== null)) {
-      drawFrame(cache.get(target));
-      if (idleNext !== null && cache.has(idleNext)) drawFrame(cache.get(idleNext),idleBlend,false);
+    if (cache.has(target) && target !== drawn) {
+      drawFrame(cache.get(target),isIdle);
       drawn = target; canvas.dataset.frame = String(target); canvas.hidden = false; poster.hidden = true;
     }
-    if (drawn >= 0 && cache.has(drawn)) positionPill(cache.get(drawn), idleNext !== null ? cache.get(idleNext) : null, idleBlend);
+    if (drawn >= 0 && cache.has(drawn)) positionPill(cache.get(drawn));
     const wanted = [target];
     for (let distance=1; distance<=5; distance++) wanted.push(target+distance,target-distance);
     for (const index of wanted) {
       if (loading.size >= 3) break;
-      if (index < 0 || index > last || cache.has(index) || loading.has(index) || failed.has(index)) continue;
+      if (index < 0 || index >= manifest.frames.length || cache.has(index) || loading.has(index) || failed.has(index)) continue;
       load(index);
     }
     prefetch();

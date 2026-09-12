@@ -35,8 +35,8 @@ without clipping the opening lid. The page starts at frame 14 (about 5.6 degrees
 to frame 120. The stage initially fills the space below the hero and expands
 to the available viewport as the hero scrolls away. The player crops only the
 unused lower image margin to center the visible device.
-Only nearby frames are decoded (12 cached, up to 3 in flight); no idle animation
-loop runs. Requests pause outside the scene. Missing frames retain the last good
+Only nearby frames are decoded (12 cached, up to 3 in flight). Requests pause
+outside the scene. Missing frames retain the last good
 image. Motion is enabled by default, deliberately overriding the system Reduce Motion
 preference as requested. The footer offers a native On/Off radio group; On shows
 the open poster. A second radio group offers Auto/Light/Dark, defaulting to Auto
@@ -112,8 +112,28 @@ the previous compressed cache. Save-Data skips background prefetching. Theme
 manifests are fetched independently because deduplication mappings can differ.
 
 At the top of the page, after 1.5 seconds without input, an idle six-second cycle
-uses the existing near-closed frames to move the lid between approximately 0 and
-5 degrees. It stops during scrolling/playback, when the document is hidden, or
+uses a separate 181-frame sequence with evenly spaced angles from 0 to 5 degrees.
+These are true rendered poses, without crossfading. The camera and base stay fixed;
+a cosine timing curve gently reverses direction. The 121-frame scroll sequence is
+unchanged. Idle frames preload only while the page is at the top. It stops during scrolling/playback, when the document is hidden, or
 when the site Reduce Motion preference is on. The interaction pill uses the
 three requested SF Symbols exported as vector paths by
 `scripts/export-website-symbols.swift`.
+
+Render and install each idle appearance independently:
+
+```sh
+scripts/render-website-frames.sh --output build/idle-masters-light --appearance light --motion idle --frames 181 --format png
+python3 scripts/encode-website-webp.py build/idle-masters-light build/idle-webp-light
+python3 scripts/install-website-sequence.py build/idle-webp-light --appearance light --motion idle
+
+scripts/render-website-frames.sh --output build/idle-masters-dark --appearance dark --finish space-gray --background 1d1d1f --motion idle --frames 181 --format png
+python3 scripts/encode-website-webp.py build/idle-masters-dark build/idle-webp-dark
+python3 scripts/install-website-sequence.py build/idle-webp-dark --appearance dark --motion idle
+```
+
+The hero title plays a one-shot 2.2-second book-opening effect on page load.
+“Open” and “up” rotate around their shared seam, starting light gray and settling
+into the headline gradient. It uses CSS perspective without shifting layout,
+retains one accessible heading name, and is disabled by the site Reduce Motion
+control and in forced-colors mode.

@@ -8,7 +8,7 @@ class Check(HTMLParser):
     def handle_starttag(self, tag, attributes):
         a=dict(attributes)
         if tag=='img': assert a.get('alt') is not None, a
-        for key in ['src','href']:
+        for key in ['src','href','data-sequence','data-dark-sequence','data-idle-sequence','data-dark-idle-sequence']:
             value=a.get(key,'')
             if value and not value.startswith(('https://','#')):
                 assert (root/value).is_file(), value

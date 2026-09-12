@@ -9,13 +9,13 @@ import DuoGraphics
     static func main() async throws {
         let arguments = Array(CommandLine.arguments.dropFirst())
         if arguments.contains("--help") {
-            print("WebsiteFrames --output DIR [--color silver|skyBlue|starlight|midnight] [--wallpaper FILE] [--frames 121] [--width 2880] [--height 2000] [--cache build/apple-models] [--background f5f5f7] [--appearance light|dark] [--finish original|space-gray] [--format jpg|png]")
+            print("WebsiteFrames --output DIR [--color silver|skyBlue|starlight|midnight] [--wallpaper FILE] [--frames 121] [--width 2880] [--height 2000] [--cache build/apple-models] [--background f5f5f7] [--appearance light|dark] [--finish original|space-gray] [--format jpg|png] [--motion scroll|idle]")
             return
         }
         guard arguments.count % 2 == 0 else { throw Failure.message("Options require values; use --help") }
         var options: [String:String] = [:]
         for i in stride(from:0,to:arguments.count,by:2) {
-            guard ["--output","--color","--wallpaper","--frames","--width","--height","--cache","--background","--appearance","--finish","--format"].contains(arguments[i]), options[arguments[i]] == nil else { throw Failure.message("Unknown or duplicate option: \(arguments[i])") }
+            guard ["--output","--color","--wallpaper","--frames","--width","--height","--cache","--background","--appearance","--finish","--format","--motion"].contains(arguments[i]), options[arguments[i]] == nil else { throw Failure.message("Unknown or duplicate option: \(arguments[i])") }
             options[arguments[i]] = arguments[i+1]
         }
         guard let output = options["--output"],
@@ -23,6 +23,8 @@ import DuoGraphics
               let count = Int(options["--frames"] ?? "121"), (2...361).contains(count),
               let width = Int(options["--width"] ?? "2880"), (320...3840).contains(width),
               let height = Int(options["--height"] ?? "2000"), (240...2160).contains(height) else { throw Failure.message("Invalid arguments; use --help") }
+        let motion = options["--motion"] ?? "scroll"
+        guard ["scroll","idle"].contains(motion) else { throw Failure.message("Motion must be scroll or idle") }
         let format = options["--format"] ?? "jpg"
         guard ["jpg","png"].contains(format) else { throw Failure.message("Format must be jpg or png") }
         let appearance = options["--appearance"] ?? "light"
@@ -68,13 +70,14 @@ import DuoGraphics
         model.camera.camera?.exposureOffset = 0
         try FileManager.default.createDirectory(at:destination,withIntermediateDirectories:true)
         var frames:[String] = []
+        var idleLift: CGFloat?
         for frame in 0..<count {
             try autoreleasepool {
                 let progress = Double(frame)/Double(count-1)
                 // Open over the first 85%; the final stretch lets the effect settle.
                 let opening = min(1,progress/0.85)
                 let eased = opening*opening*(3-2*opening)
-                let angle = 110*eased
+                let angle = motion == "idle" ? 5*progress : 110*eased
                 model.setAngle(angle)
                 glass.foldDegrees = max(0,85*(1-angle/110))
                 model.screenMaterial.diffuse.contents = try glass.renderOffscreen(width:wallpaper.width,height:Int(Double(wallpaper.width)/model.screenAspectRatio))
@@ -95,7 +98,9 @@ import DuoGraphics
                         if (alpha.colorAt(x:x,y:y)?.alphaComponent ?? 0) > 0.15 { top = y; break scan }
                     }
                 }
-                let lift = CGFloat(max(0,top-24))
+                // Idle keeps the base stationary; reserve room for the five-degree lift.
+                if motion == "idle", idleLift == nil { idleLift = CGFloat(max(0,top-160)) }
+                let lift = idleLift ?? CGFloat(max(0,top-24))
                 context.draw(cg,in:CGRect(x:0,y:lift,width:CGFloat(width),height:CGFloat(height)))
                 guard let composited = context.makeImage(), let jpeg = NSBitmapImageRep(cgImage:composited).representation(using:format == "png" ? .png : .jpeg,properties:[.compressionFactor:0.94]) else { throw Failure.message("Could not encode frame") }
                 let name = String(format:"frame-%03d",frame)+"."+format
@@ -104,7 +109,7 @@ import DuoGraphics
             }
         }
         // Only publish the manifest after every frame is present.
-        let manifest:[String:Any] = ["schema":1,"background":background,"camera":"symmetric-front","finish":finish,"model":"MacBook Air 13-inch","color":color.rawValue,"width":width,"height":height,"frames":frames,"poster":frames.last!,"wallpaper":options["--wallpaper"].map { URL(fileURLWithPath:$0).lastPathComponent } ?? "bundled screenshot (\(appearance))","source":configuration.assetURL.absoluteString]
+        let manifest:[String:Any] = ["schema":1,"motion":motion,"maximumAngle":motion == "idle" ? 5 : 110,"background":background,"camera":"symmetric-front","finish":finish,"model":"MacBook Air 13-inch","color":color.rawValue,"width":width,"height":height,"frames":frames,"poster":frames.last!,"wallpaper":options["--wallpaper"].map { URL(fileURLWithPath:$0).lastPathComponent } ?? "bundled screenshot (\(appearance))","source":configuration.assetURL.absoluteString]
         let json = try JSONSerialization.data(withJSONObject:manifest,options:[.prettyPrinted,.sortedKeys])
         try json.write(to:destination.appendingPathComponent("sequence.json"))
     }
