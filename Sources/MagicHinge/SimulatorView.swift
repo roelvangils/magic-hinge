@@ -89,20 +89,24 @@ struct SimulatorView: View {
         .onChange(of:appModel.angle) { _,angle in
             if model.followSensor, let angle { model.setAngle(angle) }
         }
-        .task(id:animatePreview) {
-            guard animatePreview else { return }
-            let start = ProcessInfo.processInfo.systemUptime
-            while !Task.isCancelled {
-                let elapsed = ProcessInfo.processInfo.systemUptime-start
-                model.setAngle(80+30*cos(elapsed*1.1))
-                let frameDelay: Duration = .milliseconds(ProcessInfo.processInfo.isLowPowerModeEnabled ? 33 : 16)
-                try? await Task.sleep(for:frameDelay)
-            }
-        }
+        .task(id:animatePreview) { await runPreview() }
         .onChange(of:model.followSensor) { _,enabled in
             if enabled { playing = false; if let angle = appModel.angle { model.setAngle(angle) } }
         }
         .onChange(of:model.effectEnabled) { _,_ in model.update(settings:appModel.settings) }
         .onChange(of:appModel.settings) { _,value in model.update(settings:value) }
     }
+    // Keep the async loop outside the view builder for older Swift type checkers.
+    @MainActor private func runPreview() async {
+        guard animatePreview else { return }
+        let start = ProcessInfo.processInfo.systemUptime
+        while !Task<Never, Never>.isCancelled {
+            let elapsed = ProcessInfo.processInfo.systemUptime - start
+            model.setAngle(80 + 30 * cos(elapsed * 1.1))
+            let delay: UInt64 = ProcessInfo.processInfo.isLowPowerModeEnabled ? 33_000_000 : 16_000_000
+            do { try await Task<Never, Never>.sleep(nanoseconds:delay) }
+            catch { return }
+        }
+    }
+
 }
