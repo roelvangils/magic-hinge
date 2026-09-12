@@ -77,7 +77,7 @@ import DuoGraphics
                 // Open over the first 85%; the final stretch lets the effect settle.
                 let opening = min(1,progress/0.85)
                 let eased = opening*opening*(3-2*opening)
-                let angle = motion == "idle" ? 5*progress : 110*eased
+                let angle = motion == "idle" ? 3*progress : 110*eased
                 model.setAngle(angle)
                 glass.foldDegrees = max(0,85*(1-angle/110))
                 model.screenMaterial.diffuse.contents = try glass.renderOffscreen(width:wallpaper.width,height:Int(Double(wallpaper.width)/model.screenAspectRatio))
@@ -98,7 +98,7 @@ import DuoGraphics
                         if (alpha.colorAt(x:x,y:y)?.alphaComponent ?? 0) > 0.15 { top = y; break scan }
                     }
                 }
-                // Idle keeps the base stationary; reserve room for the five-degree lift.
+                // Idle keeps the base stationary; reserve room for the three-degree lift.
                 if motion == "idle", idleLift == nil { idleLift = CGFloat(max(0,top-160)) }
                 let lift = idleLift ?? CGFloat(max(0,top-24))
                 context.draw(cg,in:CGRect(x:0,y:lift,width:CGFloat(width),height:CGFloat(height)))
@@ -109,7 +109,7 @@ import DuoGraphics
             }
         }
         // Only publish the manifest after every frame is present.
-        let manifest:[String:Any] = ["schema":1,"motion":motion,"maximumAngle":motion == "idle" ? 5 : 110,"background":background,"camera":"symmetric-front","finish":finish,"model":"MacBook Air 13-inch","color":color.rawValue,"width":width,"height":height,"frames":frames,"poster":frames.last!,"wallpaper":options["--wallpaper"].map { URL(fileURLWithPath:$0).lastPathComponent } ?? "bundled screenshot (\(appearance))","source":configuration.assetURL.absoluteString]
+        let manifest:[String:Any] = ["schema":1,"motion":motion,"maximumAngle":motion == "idle" ? 3 : 110,"background":background,"camera":"symmetric-front","finish":finish,"model":"MacBook Air 13-inch","color":color.rawValue,"width":width,"height":height,"frames":frames,"poster":frames.last!,"wallpaper":options["--wallpaper"].map { URL(fileURLWithPath:$0).lastPathComponent } ?? "bundled screenshot (\(appearance))","source":configuration.assetURL.absoluteString]
         let json = try JSONSerialization.data(withJSONObject:manifest,options:[.prettyPrinted,.sortedKeys])
         try json.write(to:destination.appendingPathComponent("sequence.json"))
     }

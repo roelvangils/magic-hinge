@@ -39,7 +39,7 @@ fetch('release.json').then(response => {
   if (!context) return;
   let manifest;
   let manifestURL = new URL(theme === 'dark' ? story.dataset.darkSequence : story.dataset.sequence, location.href);
-  const firstFrame = 14; // About 5.6°: 5% of the sequence's 110° fully open pose.
+  const firstFrame = 10; // About 3°: matches the top of the gentle idle movement.
   let previewFrame;
   const manifests = new Map();
   try {
@@ -56,7 +56,7 @@ fetch('release.json').then(response => {
         return {...m, frames:m.frames.map(name => new URL(name,url).href), poster:new URL(m.poster,url).href};
       }));
       const [scroll,idle] = sequences;
-      if (scroll.width !== idle.width || scroll.height !== idle.height || idle.motion !== 'idle' || idle.maximumAngle !== 5) return;
+      if (scroll.width !== idle.width || scroll.height !== idle.height || idle.motion !== 'idle' || idle.maximumAngle !== 3) return;
       manifests.set(new URL(scrollPath,location.href).href,{...scroll,scrollCount:scroll.frames.length,idleCount:idle.frames.length,frames:[...scroll.frames,...idle.frames]});
     }
     manifest = manifests.get(manifestURL.href);

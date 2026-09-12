@@ -31,7 +31,7 @@ width/height attributes in sync when changing the output resolution.
 The scroll player uses native page scrolling with a sticky scene. Scroll position
 maps to a frame in either direction; the camera stays centered and fixed for a symmetric front view. Each render
 keeps 24 pixels of top clearance so the closed laptop sits close to the hero
-without clipping the opening lid. The page starts at frame 14 (about 5.6 degrees, or 5% open), then scrolling advances
+without clipping the opening lid. The page starts at frame 10 (about 3 degrees open), then scrolling advances
 to frame 120. The stage initially fills the space below the hero and expands
 to the available viewport as the hero scrolls away. The player crops only the
 unused lower image margin to center the visible device.
@@ -112,7 +112,7 @@ the previous compressed cache. Save-Data skips background prefetching. Theme
 manifests are fetched independently because deduplication mappings can differ.
 
 At the top of the page, after 1.5 seconds without input, an idle six-second cycle
-uses a separate 181-frame sequence with evenly spaced angles from 0 to 5 degrees.
+uses a separate 61-frame sequence with evenly spaced angles from 0 to 3 degrees.
 These are true rendered poses, without crossfading. The camera and base stay fixed;
 a cosine timing curve gently reverses direction. The 121-frame scroll sequence is
 unchanged. Idle frames preload only while the page is at the top. It stops during scrolling/playback, when the document is hidden, or
@@ -123,13 +123,13 @@ three requested SF Symbols exported as vector paths by
 Render and install each idle appearance independently:
 
 ```sh
-scripts/render-website-frames.sh --output build/idle-masters-light --appearance light --motion idle --frames 181 --format png
-python3 scripts/encode-website-webp.py build/idle-masters-light build/idle-webp-light
-python3 scripts/install-website-sequence.py build/idle-webp-light --appearance light --motion idle
+scripts/render-website-frames.sh --output build/idle3-masters-light --appearance light --motion idle --frames 61 --format png
+python3 scripts/encode-website-webp.py build/idle3-masters-light build/idle3-webp-light
+python3 scripts/install-website-sequence.py build/idle3-webp-light --appearance light --motion idle
 
-scripts/render-website-frames.sh --output build/idle-masters-dark --appearance dark --finish space-gray --background 1d1d1f --motion idle --frames 181 --format png
-python3 scripts/encode-website-webp.py build/idle-masters-dark build/idle-webp-dark
-python3 scripts/install-website-sequence.py build/idle-webp-dark --appearance dark --motion idle
+scripts/render-website-frames.sh --output build/idle3-masters-dark --appearance dark --finish space-gray --background 1d1d1f --motion idle --frames 61 --format png
+python3 scripts/encode-website-webp.py build/idle3-masters-dark build/idle3-webp-dark
+python3 scripts/install-website-sequence.py build/idle3-webp-dark --appearance dark --motion idle
 ```
 
 The hero title plays a one-shot 3.2-second book-opening effect on page load.

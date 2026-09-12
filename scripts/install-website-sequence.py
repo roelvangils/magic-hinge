@@ -28,6 +28,6 @@ assert match, 'Missing sequence reference'
 old_folder=match[1].rsplit('/',1)[0]
 html=html.replace(old_folder+'/',f'assets/{folder}/')
 if a.appearance=='light' and a.motion=='scroll':
-    html=re.sub(r'(id="hinge-poster" src=")[^"]+',lambda m:m[1]+f'assets/{folder}/'+manifest['frames'][14],html)
+    html=re.sub(r'(id="hinge-poster" src=")[^"]+',lambda m:m[1]+f'assets/{folder}/'+manifest['frames'][10],html)
 index.write_text(html)
 print(f'{a.appearance}: assets/{folder}/sequence.json')
