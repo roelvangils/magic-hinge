@@ -30,6 +30,7 @@ fetch('release.json').then(response => {
   const hint = document.querySelector('#scroll-hint');
   const caption = document.querySelector('#story-copy');
   const play = story.querySelector('.play-scroll');
+  const pill = story.querySelector('.interaction-pill');
   const root = document.documentElement;
   let theme = root.dataset.theme;
   const updateDescription = () => { poster.alt = `A ${theme === 'dark' ? 'dark gray' : 'silver'} 13-inch MacBook Air opening to reveal the Magic Hinge glass effect on a ${theme === 'dark' ? 'dark' : 'light'} example desktop.`; };
@@ -62,6 +63,7 @@ fetch('release.json').then(response => {
   canvas.width = manifest.width; canvas.height = Math.round(manifest.height*0.86);
   // Rendered frames have top-aligned artwork. Center the device, not its blank canvas.
   const framing = new WeakMap();
+  const artworkTop = new WeakMap();
   const boundsCanvas = document.createElement('canvas');
   boundsCanvas.width = 288; boundsCanvas.height = 200;
   const boundsContext = boundsCanvas.getContext('2d', {willReadFrequently:true});
@@ -87,10 +89,16 @@ fetch('release.json').then(response => {
       }
       offset = bottom > top ? (canvas.height-(top+bottom)*manifest.height/200*scale)/2 : 60;
       framing.set(image,offset);
+      artworkTop.set(image,offset+top*manifest.height/200*scale);
     }
     context.fillStyle = '#'+background;
     context.fillRect(0,0,canvas.width,canvas.height);
     context.drawImage(image,(canvas.width-manifest.width*scale)/2,offset,manifest.width*scale,manifest.height*scale);
+  }
+  function positionPill(image) {
+    const height = Math.min(canvas.clientHeight,canvas.clientWidth*canvas.height/canvas.width);
+    const top = (canvas.clientHeight-height)/2 + height*(artworkTop.get(image) || 0)/canvas.height;
+    pill.style.top = `${Math.max(4,top-44)}px`;
   }
   const cache = new Map();
   const failed = new Set();
@@ -99,8 +107,13 @@ fetch('release.json').then(response => {
   const last = manifest.frames.length - 1;
   let broken = false, generation = 0;
   const enabled = () => !broken && root.dataset.reduceMotion !== 'on';
-  let playback = 0;
+  let playback = 0, idleStarted = null, lastInteraction = performance.now();
+  const idleAngles = Array.from({length:firstFrame}, (_,index) => {
+    const t = index/(last*0.85);
+    return 110*t*t*(3-2*t);
+  });
   function stopPlayback() {
+    lastInteraction = performance.now(); idleStarted = null;
     cancelAnimationFrame(playback);
     playback = 0;
   }
@@ -147,7 +160,7 @@ fetch('release.json').then(response => {
   function prefetch() {
     if (!visible || !enabled() || navigator.connection?.saveData) return;
     // Coarse coverage first makes a quick jump useful, then fill all intermediate poses.
-    const order = [firstFrame, last];
+    const order = [firstFrame, last, 0, firstFrame-1];
     for (let i=firstFrame; i<=last; i+=8) order.push(i);
     for (let i=firstFrame; i<=last; i++) order.push(i);
     const token = generation;
@@ -195,7 +208,7 @@ fetch('release.json').then(response => {
       canvas.hidden = true; poster.hidden = false;
     }
     if (!enabled()) {
-      stopPlayback(); play.hidden = true;
+      stopPlayback(); play.hidden = true; pill.hidden = true; canvas.dataset.idle = 'false';
       if (downloads.size) { generation++; resetDownloads(); loading.clear(); }
       story.classList.remove('is-animated'); canvas.hidden = true; poster.hidden = false;
       poster.src = new URL(manifest.poster,manifestURL).href;
@@ -203,7 +216,7 @@ fetch('release.json').then(response => {
       cache.clear(); drawn = -1; return;
     }
     story.classList.add('is-animated');
-    play.hidden = false;
+    play.hidden = false; pill.hidden = false;
     const rect = story.getBoundingClientRect();
     const stage = story.firstElementChild;
     const headerHeight = document.querySelector('.site-header').offsetHeight;
@@ -218,6 +231,14 @@ fetch('release.json').then(response => {
     const end = storyTop + rect.height-stage.offsetHeight-headerHeight;
     const progress = Math.max(0,Math.min(1,(scrollY-start)/Math.max(1,end-start)));
     target = Math.round(firstFrame+(last-firstFrame)*progress);
+    const idleEligible = visible && scrollY < 2 && !playback && document.visibilityState === 'visible';
+    if (idleEligible && performance.now()-lastInteraction >= 1500) {
+      idleStarted ??= performance.now();
+      const angle = 2.5*(1+Math.cos((performance.now()-idleStarted)*2*Math.PI/6000));
+      target = idleAngles.reduce((best,value,index) => Math.abs(value-angle) < Math.abs(idleAngles[best]-angle) ? index : best, 0);
+    } else { idleStarted = null; }
+    canvas.dataset.idle = String(idleEligible && idleStarted !== null);
+
     play.setAttribute('aria-label', target >= Math.round(last*0.85) ? 'Close the MacBook' : 'Open the MacBook');
     hint.hidden = progress > .12;
     caption.textContent = progress < .22 ? 'A glimpse of the magic. Keep scrolling.' : progress < .78 ? 'Watch your desktop turn to glass.' : '';
@@ -227,6 +248,7 @@ fetch('release.json').then(response => {
       drawFrame(cache.get(target));
       drawn = target; canvas.dataset.frame = String(target); canvas.hidden = false; poster.hidden = true;
     }
+    if (drawn >= 0 && cache.has(drawn)) positionPill(cache.get(drawn));
     const wanted = [target];
     for (let distance=1; distance<=5; distance++) wanted.push(target+distance,target-distance);
     for (const index of wanted) {
@@ -235,6 +257,7 @@ fetch('release.json').then(response => {
       load(index);
     }
     prefetch();
+    if (idleEligible) schedule();
     // Complete failure leaves the static fallback and no dead pinned scroll area.
     if (failed.has(target) && drawn === -1 && loading.size === 0) {
       broken = true; schedule();
@@ -245,5 +268,6 @@ fetch('release.json').then(response => {
   addEventListener('scroll',schedule,{passive:true});
   addEventListener('resize',schedule,{passive:true});
   addEventListener('websitepreferenceschange',schedule);
+  document.addEventListener('visibilitychange',schedule);
   schedule();
 })();

@@ -110,3 +110,10 @@ Blobs are retained for that appearance; only twelve decoded images are retained.
 Changing appearance or enabling Reduce Motion aborts pending requests and discards
 the previous compressed cache. Save-Data skips background prefetching. Theme
 manifests are fetched independently because deduplication mappings can differ.
+
+At the top of the page, after 1.5 seconds without input, an idle six-second cycle
+uses the existing near-closed frames to move the lid between approximately 0 and
+5 degrees. It stops during scrolling/playback, when the document is hidden, or
+when the site Reduce Motion preference is on. The interaction pill uses the
+three requested SF Symbols exported as vector paths by
+`scripts/export-website-symbols.swift`.

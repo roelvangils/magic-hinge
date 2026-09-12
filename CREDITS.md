@@ -24,3 +24,8 @@ It does not relicense third-party assets or dependencies.
 Unused DesertWallpaper.jpg and DuoNight.jpg are development source assets and
 are excluded from the app. The same third-party exclusions apply to these files.
 No Apple affiliation or endorsement is implied.
+
+Website interaction hints use Apple SF Symbols (`cursorarrow.click`,
+`rectangle.and.hand.point.up.left`, `digitalcrown.arrow.counterclockwise`),
+exported as vector paths from the local system font. Apple’s SF Symbols terms
+apply; these assets are excluded from the original-code MIT grant.
