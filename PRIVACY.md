@@ -22,7 +22,15 @@ procedural simulator works before a model is available.
 Optional update checks fetch an appcast from GitHub Pages and updates from GitHub
 Releases. These hosts and Apple receive standard network request information,
 such as the IP address. Sparkle system profiling and automatic installation are
-disabled. The website has no analytics, cookies, remote fonts or tracking scripts.
+disabled.
+
+The public website uses Matomo analytics hosted at `https://stats.11ways.be/`
+to measure page views, downloads and outgoing links. Analytics cookies are
+disabled, and the tracker respects browser Do Not Track settings. Matomo receives
+standard request information, including the IP address and browser information,
+as well as the page URL and referrer. Tracking runs only on the public Magic
+Hinge website, not local previews. The website does not load remote fonts.
+The Magic Hinge app itself contains no analytics.
 
 Local diagnostic logs contain timings, dimensions, error messages and render
 status. They contain no screenshot pixels. Development tests can export synthetic
