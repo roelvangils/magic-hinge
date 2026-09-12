@@ -38,7 +38,7 @@ fetch('release.json').then(response => {
   if (!context) return;
   let manifest;
   let manifestURL = new URL(theme === 'dark' ? story.dataset.darkSequence : story.dataset.sequence, location.href);
-  const firstFrame = 29; // About 22°: 20% of the sequence's 110° fully open pose.
+  const firstFrame = 25; // About 16.6°: 15% of the sequence's 110° fully open pose.
   let previewFrame;
   const manifests = new Map();
   try {
