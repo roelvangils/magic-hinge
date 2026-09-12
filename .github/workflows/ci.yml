@@ -1,0 +1,16 @@
+name: Build and verify
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  macos:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift package resolve
+      # Hosted macOS VMs do not guarantee a Metal GPU. Full GPU/asset tests run locally.
+      - run: swift test --filter 'FoldModelTests|HingeMotionFilterTests|HingePollingPolicyTests|WindowCaptureIDTests|LocalizationTests|PermissionAndOnboardingTests|LidKeyboardMotionTests|LidScrollPhysicsTests|LidTransitionTests|LidImpactResponseTests|ClosedLidFloatTests|MacBookColorChoiceTests'
+      - run: python3 scripts/check-localization.py
+      - run: scripts/build-app.sh development
+      - run: python3 scripts/check-website.py
+      - run: python3 scripts/check-source.py

@@ -1,0 +1,50 @@
+[
+  {
+    "url": "https://www.apple.com/105/media/us/macbook-air/2025/0833fe28-c438-4dc4-8edc-e39ef30df5f9/ar/macbook-air-13in-midnight.usdz",
+    "sha256": "21e2d97d97389320e8ecccb79fa77646f2c79e14a8a9520ae621151f07df411f"
+  },
+  {
+    "url": "https://www.apple.com/105/media/us/macbook-air/2025/0833fe28-c438-4dc4-8edc-e39ef30df5f9/ar/macbook-air-13in-silver.usdz",
+    "sha256": "5acfda9b9628bee1b500e6b6225baf4768ebc27e91dc3eaf839f568d7e1597e1"
+  },
+  {
+    "url": "https://www.apple.com/105/media/us/macbook-air/2026/ff11cb38-708e-4c28-9653-1b01a2f8fd2b/ar/macbook-air-13in-sky-blue.usdz",
+    "sha256": "49568d2b739a3416fad12d0fd923b19c8afc65dc02befd49c236cd8ff173380e"
+  },
+  {
+    "url": "https://www.apple.com/105/media/us/macbook-air/2025/0833fe28-c438-4dc4-8edc-e39ef30df5f9/ar/macbook-air-13in-starlight.usdz",
+    "sha256": "4ff9eed51381c83fd8956928f4046c7813d49001f5ca08b3a821f52aba213d58"
+  },
+  {
+    "url": "https://www.apple.com/105/media/us/macbook-air/2025/0833fe28-c438-4dc4-8edc-e39ef30df5f9/ar/macbook-air-15in-midnight.usdz",
+    "sha256": "1a7608e6a560593689b57eeb0c20ed2295524d532957250bda421c8e434fc9a2"
+  },
+  {
+    "url": "https://www.apple.com/105/media/us/macbook-air/2025/0833fe28-c438-4dc4-8edc-e39ef30df5f9/ar/macbook-air-15in-silver.usdz",
+    "sha256": "374e5698d3abd8b88623c8c57b5409a08ecc9be2a50bd5d7286f6ac8ca2d6ee4"
+  },
+  {
+    "url": "https://www.apple.com/105/media/us/macbook-air/2026/ff11cb38-708e-4c28-9653-1b01a2f8fd2b/ar/macbook-air-15in-sky-blue.usdz",
+    "sha256": "35fb086b83a3c83c3e61e7be23ff8abaf60d6545611d5ebb1706443b89eb5132"
+  },
+  {
+    "url": "https://www.apple.com/105/media/us/macbook-air/2025/0833fe28-c438-4dc4-8edc-e39ef30df5f9/ar/macbook-air-15in-starlight.usdz",
+    "sha256": "91a96e344adc3e352697f36e8dd75f668777e156985bf1c83410a9b12eb657fc"
+  },
+  {
+    "url": "https://www.apple.com/105/media/us/macbook-neo/2026/eee281c9-06d4-45d9-9a37-ef16ad413279/ar/macbook-neo.usdz",
+    "sha256": "d1315f57e46720c07c531971c957a1fa9ce91c66884434480990bece3f62ad51"
+  },
+  {
+    "url": "https://www.apple.com/105/media/us/macbook-pro/2025/785e1bc4-d1bd-4cf4-b1b3-94b9411c9e74/ar/macbook-pro-14-in-space-black-variant.usdz",
+    "sha256": "fc5855222e774b3a4bb085a6354ea598fbacf24513eebce71576a048bdaa259b"
+  },
+  {
+    "url": "https://www.apple.com/105/media/us/macbook-pro/2023/232a2dbf-5898-4fd1-a350-6a7c5c2e31c9/ar/macbook_pro_m3_pro_16_silver.usdz",
+    "sha256": "bf40ae5a1bf5fc93677caed74f51c6c4c7cdb7f4adb114abe83ca69add161d49"
+  },
+  {
+    "url": "https://www.apple.com/105/media/us/macbook-pro/2023/232a2dbf-5898-4fd1-a350-6a7c5c2e31c9/ar/macbook_pro_m3_pro_16_space_black.usdz",
+    "sha256": "5ceab491099728ae8e30815846c723cc1aa06fb6ac9ff9c52cf8cca66e0b75e6"
+  }
+]

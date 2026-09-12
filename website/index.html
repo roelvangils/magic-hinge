@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A little magic in your MacBook hinge. A free, open-source macOS app that turns your desktop into moving frosted glass.">
+  <meta name="color-scheme" content="light dark">
+  <title>Magic Hinge — A little magic in your MacBook</title>
+  <link rel="icon" href="assets/icon.png"><link rel="stylesheet" href="style.css">
+  <script src="site.js" defer></script>
+</head>
+<body>
+  <header><a class="brand" href="#"><img src="assets/icon.png" width="44" height="44" alt="">Magic Hinge</a><a href="https://github.com/roelvangils/magic-hinge">Source on GitHub <span aria-hidden="true">↗</span></a></header>
+  <main>
+    <section class="hero" aria-labelledby="headline">
+      <p class="eyebrow">A SMALL DELIGHT FOR YOUR MAC</p>
+      <h1 id="headline">A little magic.<br>Every time you close it.</h1>
+      <p class="intro">Tilt your MacBook screen. Watch your desktop bend, soften and fade like frosted glass. Hold still, and everything settles back into place.</p>
+      <div class="download"><a id="download" class="button" hidden>Download for Mac <span aria-hidden="true">↓</span></a><p id="release-status" role="status">Version 2.3.0 is being prepared.</p></div>
+      <p class="requirements">Free &amp; open source · Apple silicon · macOS 14.2 or later</p>
+      <figure><img src="assets/simulator.png" alt="Magic Hinge’s interactive MacBook simulator displaying the built-in abstract example image." width="1882" height="1344"><figcaption>The real app, using its built-in example image.</figcaption></figure>
+    </section>
+    <section class="details" aria-label="How it works">
+      <article><span class="number">01 / MOVE</span><h2>Follow the hinge.</h2><p>A readable hinge sensor connects the effect to your MacBook’s movement. Pause it anytime from the menu bar. External displays stay clear.</p></article>
+      <article><span class="number">02 / PLAY</span><h2>Try it without a sensor.</h2><p>Drag the 3D laptop, use the angle slider, or press the arrow keys. Double-click to open or close. Hold Shift to slow down the transition.</p></article>
+      <article><span class="number">03 / RELAX</span><h2>Your desktop stays yours.</h2><p>Screen images stay in your Mac’s memory. They are never saved or uploaded. No analytics, no account, and no accessibility permission required.</p></article>
+    </section>
+    <section class="installation" aria-labelledby="install-title">
+      <div><p class="eyebrow">MAKE YOURSELF AT HOME</p><h2 id="install-title">One small app.<br>Two ways to install.</h2><p>Open the disk image and drag Magic Hinge into Applications. Or use Homebrew:</p></div>
+      <div><div class="terminal"><code id="brew-command">brew install --cask roelvangils/tap/magic-hinge</code><button id="copy" type="button">Copy</button></div><p id="copy-status" role="status" aria-live="polite"></p><p class="fine">The app speaks English and Dutch. Screen Recording is optional; the simulator works with an example image. Models download directly from Apple and remain available offline after downloading.</p></div>
+    </section>
+    <section class="privacy" aria-labelledby="privacy-title"><h2 id="privacy-title">Made to feel light.</h2><p>The effect clears on sleep, screen lock and sensor loss. It does not prevent sleep or draw over the secure login screen. Update checks are optional; automatic downloads and installation are off.</p><p class="fine">Automatic hinge control depends on the sensor available in your Mac, detected at runtime. The simulator remains available when no sensor is readable.</p><details><summary>Credits &amp; licenses</summary><p>Magic Hinge by Roel Van Gils. Original code under the MIT license. Apple supplies the original 3D models; Apple’s terms apply. Wallpapers by <a href="https://basicappleguy.com/haberdashery/iphone-duo-wallpaper">Basic Apple Guy</a>, used with permission. Studio lighting from <a href="https://polyhaven.com/a/studio_small_09">Poly Haven</a> (CC0). Updates by Sparkle; permission guidance by PermissionFlow.</p><p>Third-party assets are excluded from the code’s MIT license. See the <a href="https://github.com/roelvangils/magic-hinge/blob/main/CREDITS.md">complete credits and terms</a>.</p></details></section>
+  </main>
+  <footer><span>Magic Hinge · Made by Roel Van Gils</span><a href="https://github.com/roelvangils/magic-hinge/issues">Report an issue</a><span id="version"></span></footer>
+</body>
+</html>

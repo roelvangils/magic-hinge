@@ -1,0 +1,103 @@
+[
+  {
+    "path": "Sources/MagicHinge/Resources/BasicAppleGuy.png",
+    "bytes": 11150,
+    "sha256": "0155b7263064081674f4175c38a413a8805d5d5ab68bedfa42f36f92f653dc42",
+    "dimensions": [
+      "  pixelWidth: 304",
+      "  pixelHeight: 304"
+    ],
+    "usage": "App wallpaper / attribution",
+    "license": "Basic Apple Guy; permission, not MIT"
+  },
+  {
+    "path": "Sources/MagicHinge/Resources/DesertWallpaper.jpg",
+    "bytes": 57923,
+    "sha256": "cec39f78ab9fcadca87f89fab2a52e8b1ba7555a1443d5339ffa42bceb0002b2",
+    "dimensions": [
+      "  pixelWidth: 1672",
+      "  pixelHeight: 940"
+    ],
+    "usage": "Development only; excluded from app bundle",
+    "license": "Third-party asset; maintainer permission, not MIT"
+  },
+  {
+    "path": "Sources/MagicHinge/Resources/DuoDay.jpg",
+    "bytes": 10196715,
+    "sha256": "619e6fbb3ed03984ae7b398fe334afc3773b8c0a41a3c54250bdb19fe1c74dbe",
+    "dimensions": [
+      "  pixelWidth: 6016",
+      "  pixelHeight: 3900"
+    ],
+    "usage": "App wallpaper / attribution",
+    "license": "Basic Apple Guy; permission, not MIT"
+  },
+  {
+    "path": "Sources/MagicHinge/Resources/DuoNight.jpg",
+    "bytes": 10138610,
+    "sha256": "dd3c50d61a834a2f2694b9e42a092b9e803147df0379c3a8adabc20848ac7320",
+    "dimensions": [
+      "  pixelWidth: 6016",
+      "  pixelHeight: 3900"
+    ],
+    "usage": "Development only; excluded from app bundle",
+    "license": "Third-party asset; maintainer permission, not MIT"
+  },
+  {
+    "path": "Sources/MagicHinge/Resources/DuoNightStarless.jpg",
+    "bytes": 8903497,
+    "sha256": "050a22dbb0a396041d8706ba1823d0e2f4024a50fd2f9486921a53d49a93b085",
+    "dimensions": [
+      "  pixelWidth: 6016",
+      "  pixelHeight: 3900"
+    ],
+    "usage": "App wallpaper / attribution",
+    "license": "Basic Apple Guy; permission, not MIT"
+  },
+  {
+    "path": "Sources/MagicHinge/Resources/en.lproj/InfoPlist.strings",
+    "bytes": 166,
+    "sha256": "d0ad6916ee92f0b06c1cbd33ad0241b98a9212624fc904954a9533602c1876a4",
+    "usage": "Catalog or localization",
+    "license": "MIT"
+  },
+  {
+    "path": "Sources/MagicHinge/Resources/nl.lproj/InfoPlist.strings",
+    "bytes": 194,
+    "sha256": "d87f50b3ed391b7878a21913e426c82599ecd04c65d8a14ea6df7d9279bbaaff",
+    "usage": "Catalog or localization",
+    "license": "MIT"
+  },
+  {
+    "path": "Sources/DuoSimulation/Resources/AppleModels.json",
+    "bytes": 2734,
+    "sha256": "29818cf43cc24eed7a24eb3ee93015a696107a67db45a8d77cebed5c1a91ca78",
+    "usage": "Catalog or localization",
+    "license": "MIT"
+  },
+  {
+    "path": "Sources/DuoSimulation/Resources/snap.aiff",
+    "bytes": 110662,
+    "sha256": "885d1090fc1d1d394d4d42bcaf62bda13965896ee13bd3387c7d9a60d907ef8e",
+    "usage": "Lid contact audio",
+    "license": "Supplied asset; maintainer permission, not MIT"
+  },
+  {
+    "path": "Sources/DuoSimulation/Resources/studio_small_09_1k.hdr",
+    "bytes": 1615248,
+    "sha256": "e7cfda5f4e98e623db12b8bfd0184e048488e4855d9c83e2751fb44a32e80c45",
+    "usage": "Studio lighting",
+    "license": "CC0 1.0"
+  },
+  {
+    "path": "assets/AppIcon.png",
+    "bytes": 1129731,
+    "sha256": "6316f04a15cefbf12a06a4ff2bee8c1789770ea441c3bd972e62d9c81aa55963",
+    "dimensions": [
+      "  pixelWidth: 1254",
+      "  pixelHeight: 1254"
+    ],
+    "usage": "App, DMG, website icon source",
+    "license": "MIT"
+  }
+]
