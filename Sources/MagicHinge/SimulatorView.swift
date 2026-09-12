@@ -14,7 +14,7 @@ struct SimulatorView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var playing = false
     private var animatePreview: Bool { playing && scenePhase == .active && !appModel.effectActive && !suspended }
-    var body: some View {
+    private var content: some View {
         VStack(spacing:0) {
             HStack(alignment:.firstTextBaseline) {
                 Text("Magic Hinge").font(.system(size:26,weight:.semibold,design:.rounded))
@@ -73,9 +73,12 @@ struct SimulatorView: View {
             }.padding(.bottom,18)
             if let error = model.error { Text(error).foregroundStyle(.red).font(.caption).padding(.bottom,12) }
         }
+    }
+    private var lifecycleView: some View {
+        content
         .frame(minWidth:960,minHeight:600)
         .onChange(of:colorScheme) { _,value in model.setExampleAppearance(dark:value == .dark) }
-        .onAppear { model.setExampleAppearance(dark:colorScheme == .dark); model.update(settings:appModel.settings); model.setVisible(!suspended); if !suspended { model.refreshDesktop() }; if CommandLine.arguments.contains("--example-image") { model.setAngle(90) } }
+        .onAppear(perform:appear)
         .onDisappear { model.setVisible(false) }
         .onChange(of:suspended) { _,value in model.setVisible(!value && scenePhase == .active); if !value { model.refreshDesktop() } }
         .onChange(of:scenePhase) { _,value in model.setVisible(value == .active && !suspended) }
@@ -85,6 +88,9 @@ struct SimulatorView: View {
         .onReceive(NotificationCenter.default.publisher(for:NSApplication.didResignActiveNotification)) { _ in
             model.setVisible(false)
         }
+    }
+    var body: some View {
+        lifecycleView
         .onChange(of:appModel.permission) { _,allowed in if allowed { model.refreshDesktop() } else { model.clearDesktop() } }
         .onChange(of:appModel.angle) { _,angle in
             if model.followSensor, let angle { model.setAngle(angle) }
@@ -95,6 +101,13 @@ struct SimulatorView: View {
         }
         .onChange(of:model.effectEnabled) { _,_ in model.update(settings:appModel.settings) }
         .onChange(of:appModel.settings) { _,value in model.update(settings:value) }
+    }
+    private func appear() {
+        model.setExampleAppearance(dark:colorScheme == .dark)
+        model.update(settings:appModel.settings)
+        model.setVisible(!suspended)
+        if !suspended { model.refreshDesktop() }
+        if CommandLine.arguments.contains("--example-image") { model.setAngle(90) }
     }
     // Keep the async loop outside the view builder for older Swift type checkers.
     @MainActor private func runPreview() async {

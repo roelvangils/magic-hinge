@@ -159,4 +159,4 @@ resource decoding/difference test and packaged-original comparisons passed.
 - Pages deployment passed. Clicking its actual download button downloaded the DMG; checksum, stapling and Gatekeeper checks passed on that download.
 - Homebrew cask audit passed; installation from the public release into an isolated application directory succeeded. Installed app Gatekeeper/stapling checks passed. Uninstall succeeded.
 - `brew upgrade --cask --greedy` correctly reported the installed version current; a between-version Homebrew upgrade remains untested because this is the first release.
-- Public CI exposed a type-inference timeout in the older hosted Swift compiler. Main now explicitly types the unchanged animation delay as Duration. The published binary was built and tested with the local compiler at release commit 50c40fa.
+- Public CI exposed a type-inference timeout in the older hosted Swift compiler. Main now separates view content, lifecycle modifiers and the preview loop to keep type-checking bounded; preview delays remain 16/33 ms. The published binary was built and tested with the local compiler at release commit 50c40fa.
