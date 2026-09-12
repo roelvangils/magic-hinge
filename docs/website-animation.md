@@ -132,10 +132,9 @@ python3 scripts/encode-website-webp.py build/idle3-masters-dark build/idle3-webp
 python3 scripts/install-website-sequence.py build/idle3-webp-dark --appearance dark --motion idle
 ```
 
-The hero title plays a one-shot 3.2-second book-opening effect on page load.
-“Open” and “up” rotate around their shared seam, starting edge-on at the gap between the words. Both unfold simultaneously,
-remain light gray through 78% of the animation, then settle into the headline
-gradient. Each page has local perspective so unequal word widths do not move
-the shared seam. It uses CSS perspective without shifting layout,
-retains one accessible heading name, and is disabled by the site Reduce Motion
-control and in forced-colors mode.
+The hero title starts with fully visible, stationary light-gray “Open up”.
+A one-second color fill reveals the gradient over Open from top to bottom and
+up from bottom to top, simultaneously with identical easing. Opposing CSS masks
+provide soft fade edges over the gray base letters without moving the text.
+The heading retains one accessible name. The site Reduce Motion control shows
+the final colored title immediately; forced colors uses ordinary system text.

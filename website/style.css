@@ -20,25 +20,24 @@
 .hinge-visual .play-scroll:focus-visible{outline:3px solid var(--blue,#0071e3);outline-offset:-5px}
 .hinge-visual .play-scroll[hidden]{display:none}
 
-/* Each word pivots around the shared seam, like two facing book pages. */
+/* Stationary gray letters beneath two opposing, softly feathered color fills. */
 .hero h1{--title-start:#152a43;--title-seam:#2a4463;--title-middle:#355170;--title-end:#6485ac;--title-ink:#243e5e}
 [data-theme="dark"] .hero h1{--title-start:#8dabcc;--title-seam:#a0bbd8;--title-middle:#abc4df;--title-end:#d8e6f5;--title-ink:#b5cce5}
-.title-book{display:inline-flex;white-space:nowrap;vertical-align:baseline}
-.title-page{display:inline-block;color:var(--title-ink);backface-visibility:hidden}
-.title-open{--title-gradient:linear-gradient(100deg,var(--title-start),var(--title-seam));padding-right:.12em;transform-origin:100% 50%}
-.title-up{--title-gradient:linear-gradient(100deg,var(--title-seam),var(--title-middle));padding-left:.12em;transform-origin:0 50%}
+.title-words{display:inline-flex;white-space:nowrap;vertical-align:baseline}
+.title-word{position:relative;display:inline-block;color:#d2d2d7}
+.title-open{--title-gradient:linear-gradient(100deg,var(--title-start),var(--title-seam));padding-right:.12em}
+.title-up{--title-gradient:linear-gradient(100deg,var(--title-seam),var(--title-middle));padding-left:.12em}
+.title-word::after{content:attr(data-word);position:absolute;inset:0;padding:inherit;color:var(--title-ink)}
 .title-rest{--title-gradient:linear-gradient(100deg,var(--title-middle),var(--title-end));color:var(--title-ink)}
 @supports ((background-clip:text) or (-webkit-background-clip:text)){
-  .title-page,.title-rest{background:var(--title-gradient);background-clip:text;-webkit-background-clip:text;--title-ink:transparent;color:var(--title-ink)}
+  .title-word::after,.title-rest{background:var(--title-gradient);background-clip:text;-webkit-background-clip:text;color:transparent}
 }
-/* Local perspective puts both vanishing edges exactly on the inter-word seam,
-   even though Open is wider than up. Keep gray visible after the pages unfold. */
-:root[data-reduce-motion="off"] .title-open{animation:title-open 3200ms ease-in-out both,title-color 3200ms linear both}
-:root[data-reduce-motion="off"] .title-up{animation:title-up 3200ms ease-in-out both,title-color 3200ms linear both}
-@keyframes title-open{0%,8%{transform:perspective(700px) rotateY(-90deg)}60%,100%{transform:perspective(700px) rotateY(0)}}
-@keyframes title-up{0%,8%{transform:perspective(700px) rotateY(90deg)}60%,100%{transform:perspective(700px) rotateY(0)}}
-@keyframes title-color{0%,78%{color:#d2d2d7}100%{color:var(--title-ink)}}
-@media(forced-colors:active){.title-page,.title-rest{background:none!important;color:CanvasText!important;-webkit-text-fill-color:CanvasText;animation:none!important}}
+:root[data-reduce-motion="off"] .title-word::after{-webkit-mask-size:100% 300%;mask-size:100% 300%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;animation-duration:1000ms;animation-timing-function:ease-in-out;animation-fill-mode:both}
+:root[data-reduce-motion="off"] .title-open::after{-webkit-mask-image:linear-gradient(to bottom,#000 33.333%,transparent 66.667%);mask-image:linear-gradient(to bottom,#000 33.333%,transparent 66.667%);animation-name:title-fill-down}
+:root[data-reduce-motion="off"] .title-up::after{-webkit-mask-image:linear-gradient(to bottom,transparent 33.333%,#000 66.667%);mask-image:linear-gradient(to bottom,transparent 33.333%,#000 66.667%);animation-name:title-fill-up}
+@keyframes title-fill-down{from{-webkit-mask-position:0 100%;mask-position:0 100%}to{-webkit-mask-position:0 0;mask-position:0 0}}
+@keyframes title-fill-up{from{-webkit-mask-position:0 0;mask-position:0 0}to{-webkit-mask-position:0 100%;mask-position:0 100%}}
+@media(forced-colors:active){.title-word,.title-rest{background:none!important;color:CanvasText!important;-webkit-text-fill-color:CanvasText}.title-word::after{display:none}}
 
 /* Keep the eyebrow close to the headline and give the download more breathing room. */
 .hero > .eyebrow + h1{margin-top:8px}
