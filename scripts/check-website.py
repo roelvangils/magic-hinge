@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import argparse, json, xml.etree.ElementTree as ET
+import argparse, json, re, xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('--release',action='store_true');args=p.parse_args()
@@ -19,6 +19,12 @@ for manifest in (root/'assets').glob('*/sequence.json'):
     assert sequence['poster'] in sequence['frames']
     for name in sequence['frames']:
         assert Path(name).name==name and (manifest.parent/name).is_file(), name
+framing=json.loads((root/'sequence-framing.json').read_text())
+for path in re.findall(r'data-(?:dark-)?(?:idle-)?sequence="([^"]+)"',(root/'index.html').read_text()):
+    sequence=json.loads((root/path).read_text()); measured=framing[path]
+    assert (measured['width'],measured['height']) == (sequence['width'],sequence['height'])
+    assert len(measured['bounds']) == len(sequence['frames'])
+    assert all(len(b)==2 and 0<=b[0]<b[1]<=1 for b in measured['bounds'])
 assert 'lang="en"' in (root/'index.html').read_text()
 if args.release:
     r=json.loads((root/'release.json').read_text())

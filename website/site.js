@@ -36,23 +36,33 @@ fetch('release.json').then(response => {
   const updateDescription = () => { poster.alt = `A ${theme === 'dark' ? 'dark gray' : 'silver'} 13-inch MacBook Air opening to reveal the Magic Hinge glass effect on a ${theme === 'dark' ? 'dark' : 'light'} example desktop.`; };
   updateDescription();
   const context = canvas.getContext('2d', { alpha: false });
+  let layoutDirty = true, geometry, stageHeight = 0;
   function fallback() {
+    layoutDirty = true;
     root.dataset.sequence = 'fallback';
     story.classList.remove('is-animated');
-    story.firstElementChild.style.height = '';
+    story.firstElementChild.style.height = ''; stageHeight = 0;
   }
   if (!context) { fallback(); return; }
   function layoutStage() {
-    const rect = story.getBoundingClientRect();
     const stage = story.firstElementChild;
-    const headerHeight = document.querySelector('.site-header').offsetHeight;
-    const storyTop = rect.top + scrollY;
-    const available = Math.max(280,innerHeight-storyTop);
-    const expanded = Math.max(280,innerHeight-headerHeight);
+    if (layoutDirty) {
+      const rect = story.getBoundingClientRect();
+      geometry = {storyTop:rect.top+scrollY, storyHeight:rect.height,
+        headerHeight:document.querySelector('.site-header').offsetHeight,
+        width:stage.clientWidth, viewport:innerHeight,
+        bottom:parseFloat(getComputedStyle(story.querySelector('.hinge-visual')).bottom)};
+      layoutDirty = false;
+    }
+    const {storyTop,headerHeight,viewport} = geometry;
+    const available = Math.max(280,viewport-storyTop);
+    const expanded = Math.max(280,viewport-headerHeight);
     const reveal = Math.max(0,Math.min(1,scrollY/Math.max(1,storyTop-headerHeight)));
-    stage.style.height = `${available+(expanded-available)*reveal}px`;
-    return {rect,stage,headerHeight,storyTop};
+    const height = available+(expanded-available)*reveal;
+    if (stageHeight !== height) { stage.style.height = `${height}px`; stageHeight = height; }
+    return geometry;
   }
+
   // Reserve the final stage geometry before awaiting any network resources.
   if (root.dataset.reduceMotion !== 'on') { story.classList.add('is-animated'); layoutStage(); }
   let manifest;
@@ -61,6 +71,9 @@ fetch('release.json').then(response => {
   let previewFrame;
   const manifests = new Map();
   try {
+    const framingResponse = await fetch('sequence-framing.json');
+    if (!framingResponse.ok) throw new Error('Framing unavailable');
+    const framing = await framingResponse.json();
     for (const [scrollPath,idlePath] of [[story.dataset.sequence,story.dataset.idleSequence],[story.dataset.darkSequence,story.dataset.darkIdleSequence]]) {
       const sequences = await Promise.all([scrollPath,idlePath].map(async path => {
         const url = new URL(path,location.href);
@@ -71,11 +84,13 @@ fetch('release.json').then(response => {
             !m.frames.every(name => /^frame-\d{3}\.(jpg|webp)$/.test(name)) ||
             !Number.isInteger(m.width) || m.width < 320 || m.width > 3840 ||
             !Number.isInteger(m.height) || m.height < 240 || m.height > 2160 || !m.frames.includes(m.poster)) throw new Error('Invalid sequence');
-        return {...m, frames:m.frames.map(name => new URL(name,url).href), poster:new URL(m.poster,url).href};
+        const measured = framing[path];
+        if (!measured || measured.width !== m.width || measured.height !== m.height || measured.bounds.length !== m.frames.length || !measured.bounds.every(b=>Array.isArray(b)&&b.length===2&&b.every(Number.isFinite)&&b[0]>=0&&b[1]<=1&&b[0]<b[1])) throw new Error('Invalid framing');
+        return {...m, bounds:measured.bounds, frames:m.frames.map(name => new URL(name,url).href), poster:new URL(m.poster,url).href};
       }));
       const [scroll,idle] = sequences;
       if (scroll.width !== idle.width || scroll.height !== idle.height || idle.motion !== 'idle' || idle.maximumAngle !== 3) throw new Error('Mismatched idle sequence');
-      manifests.set(new URL(scrollPath,location.href).href,{...scroll,scrollCount:scroll.frames.length,idleCount:idle.frames.length,frames:[...scroll.frames,...idle.frames]});
+      manifests.set(new URL(scrollPath,location.href).href,{...scroll,scrollCount:scroll.frames.length,idleCount:idle.frames.length,frames:[...scroll.frames,...idle.frames],bounds:[...scroll.bounds,...idle.bounds.map(()=>idle.bounds[idle.bounds.length-1])]});
     }
     manifest = manifests.get(manifestURL.href);
     if ([...manifests.values()].some(m => m.width !== manifest.width || m.height !== manifest.height || m.frames.length !== manifest.frames.length || m.scrollCount !== manifest.scrollCount)) throw new Error('Mismatched appearances');
@@ -83,55 +98,29 @@ fetch('release.json').then(response => {
   previewFrame = manifest.frames[firstFrame];
   poster.src = new URL(previewFrame,manifestURL).href;
   canvas.width = manifest.width; canvas.height = Math.round(manifest.height*0.86);
-  // Rendered frames have top-aligned artwork. Center the device, not its blank canvas.
-  const framing = new WeakMap();
-  const artworkTop = new WeakMap();
-  let idleFraming = null;
-  const boundsCanvas = document.createElement('canvas');
-  boundsCanvas.width = 288; boundsCanvas.height = 200;
-  const boundsContext = boundsCanvas.getContext('2d', {willReadFrequently:true});
-  function drawFrame(image, isIdle = false) {
-    const background = manifest.background || (theme === 'dark' ? '1d1d1f' : 'f5f5f7');
-    // Use one scale throughout the sequence; even the full source height fits
-    // with a safety margin, so the opening animation never clips or pulses in size.
-    const scale = Math.min(1, (canvas.height-120)/manifest.height);
-    let offset = framing.get(image);
-    if (isIdle && idleFraming) {
-      offset = idleFraming.offset; artworkTop.set(image,idleFraming.top);
-    }
-    if (offset === undefined) {
-      boundsContext.drawImage(image,0,0,288,200);
-      const pixels = boundsContext.getImageData(0,0,288,200).data;
-      const rgb = [0,2,4].map(i => parseInt(background.slice(i,i+2),16));
-      let top = 200, bottom = 0;
-      for (let y=0; y<200; y++) {
-        let occupied = 0;
-        for (let x=0; x<288; x++) {
-          const i = (y*288+x)*4;
-          // Include the floating shadow, excluding only near-background compression noise.
-          if (Math.max(Math.abs(pixels[i]-rgb[0]),Math.abs(pixels[i+1]-rgb[1]),Math.abs(pixels[i+2]-rgb[2])) > 8) occupied++;
-        }
-        if (occupied >= 6) { top = Math.min(top,y); bottom = y+1; }
-      }
-      offset = bottom > top ? (canvas.height-(top+bottom)*manifest.height/200*scale)/2 : 60;
-      framing.set(image,offset);
-      artworkTop.set(image,offset+top*manifest.height/200*scale);
-      if (isIdle) idleFraming = {offset,top:artworkTop.get(image)};
-    }
-    context.fillStyle = '#'+background;
+  // Bounds are measured at build time. No pixel readback or layout reads in RAF.
+  function drawFrame(image, index) {
+    const scale = Math.min(1,(canvas.height-120)/manifest.height);
+    const [top,bottom] = manifest.bounds[index];
+    const offset = (canvas.height-(top+bottom)*manifest.height*scale)/2;
+    context.fillStyle = '#'+manifest.background;
     context.fillRect(0,0,canvas.width,canvas.height);
     context.drawImage(image,(canvas.width-manifest.width*scale)/2,offset,manifest.width*scale,manifest.height*scale);
+    return offset+top*manifest.height*scale;
   }
-  function positionPill(image) {
-    const height = Math.min(canvas.clientHeight,canvas.clientWidth*canvas.height/canvas.width);
-    const firstTop = artworkTop.get(image) || 0;
-    const top = (canvas.clientHeight-height)/2 + height*firstTop/canvas.height;
-    pill.style.top = `${Math.max(4,top-60)}px`;
+  function positionPill(index) {
+    const scale = Math.min(1,(canvas.height-120)/manifest.height);
+    const [top,bottom] = manifest.bounds[index];
+    const firstTop = (canvas.height-(top+bottom)*manifest.height*scale)/2+top*manifest.height*scale;
+    const available = stageHeight-geometry.bottom;
+    const height = Math.min(available,geometry.width*canvas.height/canvas.width);
+    pill.style.top = `${Math.max(4,(available-height)/2+height*firstTop/canvas.height-60)}px`;
   }
   const cache = new Map();
   const failed = new Set();
   const loading = new Map();
   let target = 0, drawn = -1, scheduled = false, visible = false;
+  let previousTarget = 0, direction = 1;
   const last = manifest.scrollCount - 1;
   let broken = false, generation = 0;
   const enabled = () => !broken && root.dataset.reduceMotion !== 'on';
@@ -229,7 +218,7 @@ fetch('release.json').then(response => {
   function update() {
     scheduled = false;
     if (theme !== root.dataset.theme) {
-      theme = root.dataset.theme; updateDescription(); generation++; resetDownloads(); idleFraming = null;
+      theme = root.dataset.theme; updateDescription(); generation++; resetDownloads(); layoutDirty = true;
       manifestURL = new URL(theme === 'dark' ? story.dataset.darkSequence : story.dataset.sequence,location.href);
       manifest = manifests.get(manifestURL.href); previewFrame = manifest.frames[firstFrame];
       poster.src = new URL(enabled() ? previewFrame : manifest.poster,manifestURL).href;
@@ -238,19 +227,20 @@ fetch('release.json').then(response => {
     }
     if (!enabled()) {
       stopPlayback(); play.hidden = true; pill.hidden = true; canvas.dataset.idle = 'false';
-      if (downloads.size) { generation++; resetDownloads(); idleFraming = null; loading.clear(); }
+      if (downloads.size) { generation++; resetDownloads(); layoutDirty = true; loading.clear(); }
       fallback(); canvas.hidden = true; poster.hidden = false;
       poster.src = new URL(manifest.poster,manifestURL).href;
       hint.hidden = true; caption.textContent = 'Your desktop, with a little magic.';
       cache.clear(); drawn = -1; return;
     }
+    if (!story.classList.contains('is-animated')) layoutDirty = true;
     story.classList.add('is-animated');
     play.hidden = drawn < 0; pill.hidden = drawn < 0;
     if (drawn < 0) root.dataset.sequence = 'loading';
-    const {rect,stage,headerHeight,storyTop} = layoutStage();
+    const {storyHeight,headerHeight,storyTop} = layoutStage();
     // Start as the device enters view, instead of waiting for the sticky pin.
     const start = Math.max(0,storyTop-innerHeight*0.65);
-    const end = storyTop + rect.height-stage.offsetHeight-headerHeight;
+    const end = storyTop + storyHeight-stageHeight-headerHeight;
     const progress = Math.max(0,Math.min(1,(scrollY-start)/Math.max(1,end-start)));
     target = Math.round(firstFrame+(last-firstFrame)*progress);
     const idleEligible = visible && scrollY < 2 && !playback && document.visibilityState === 'visible';
@@ -261,22 +251,31 @@ fetch('release.json').then(response => {
     } else { idleStarted = null; }
     const isIdle = idleEligible && idleStarted !== null;
     canvas.dataset.idle = String(isIdle);
+    if (target !== previousTarget) direction = Math.sign(target-previousTarget);
+    previousTarget = target;
     play.setAttribute('aria-label', !isIdle && target >= Math.round(last*0.85) ? 'Close the MacBook' : 'Open the MacBook');
     hint.hidden = progress > .12;
     caption.textContent = progress < .22 ? 'A glimpse of the magic. Keep scrolling.' : progress < .78 ? 'Watch your desktop turn to glass.' : '';
     if (!visible) return;
-    // Keep the last good frame visible during a fast scroll or a failed request.
-    if (cache.has(target) && target !== drawn) {
-      drawFrame(cache.get(target),isIdle);
+    // Late decodes must not freeze presentation or pull a moving lid backwards.
+    const sameSequence = index => isIdle ? index > last : index <= last;
+    const candidates = [...cache.keys()].filter(index => sameSequence(index) &&
+      (direction > 0 ? index <= target : index >= target) &&
+      (drawn < 0 || !sameSequence(drawn) || (direction > 0 ? index >= drawn : index <= drawn)));
+    const candidate = candidates.sort((a,b)=>Math.abs(a-target)-Math.abs(b-target))[0];
+    if (candidate !== undefined && candidate !== drawn) {
+      drawFrame(cache.get(candidate),candidate);
       root.dataset.sequence = 'ready'; play.hidden = false; pill.hidden = false;
-      drawn = target; canvas.dataset.frame = String(target); canvas.hidden = false; poster.hidden = true;
+      drawn = candidate; canvas.dataset.frame = String(candidate); canvas.hidden = false; poster.hidden = true;
     }
-    if (drawn >= 0 && cache.has(drawn)) positionPill(cache.get(drawn));
+    if (drawn >= 0) positionPill(drawn);
     const wanted = [target];
-    for (let distance=1; distance<=5; distance++) wanted.push(target+distance,target-distance);
+    // Decode ahead in the direction of travel, retaining a short reversal cushion.
+    for (let distance=1; distance<=9; distance++) wanted.push(target+distance*direction);
+    for (let distance=1; distance<=2; distance++) wanted.push(target-distance*direction);
     for (const index of wanted) {
       if (loading.size >= 3) break;
-      if (index < 0 || index >= manifest.frames.length || cache.has(index) || loading.has(index) || failed.has(index)) continue;
+      if (index < 0 || index >= manifest.frames.length || !sameSequence(index) || cache.has(index) || loading.has(index) || failed.has(index)) continue;
       load(index);
     }
     prefetch();
@@ -289,7 +288,8 @@ fetch('release.json').then(response => {
   const observer = new IntersectionObserver(entries => { visible = entries[0].isIntersecting; if (visible) schedule(); }, {rootMargin:'300px'});
   observer.observe(story);
   addEventListener('scroll',schedule,{passive:true});
-  addEventListener('resize',schedule,{passive:true});
+  addEventListener('resize',()=>{layoutDirty=true;schedule();},{passive:true});
+  new ResizeObserver(()=>{layoutDirty=true;schedule();}).observe(document.querySelector('.hero'));
   addEventListener('websitepreferenceschange',schedule);
   document.addEventListener('visibilitychange',schedule);
   schedule();

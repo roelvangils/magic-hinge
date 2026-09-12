@@ -36,8 +36,10 @@ to frame 120. The stage initially fills the space below the hero and expands
 to the available viewport as the hero scrolls away. The player crops only the
 unused lower image margin to center the visible device.
 Only nearby frames are decoded (12 cached, up to 3 in flight). Requests pause
-outside the scene. Missing frames retain the last good
-image. Motion is enabled by default, deliberately overriding the system Reduce Motion
+outside the scene. The player presents the closest decoded pose on the way to
+the requested pose, without moving backwards when a late decode arrives. It
+prioritizes nine poses ahead in the current direction and two behind for reversals.
+Missing frames retain the last good image. Motion is enabled by default, deliberately overriding the system Reduce Motion
 preference as requested. The footer offers a native On/Off radio group; On shows
 the open poster. A second radio group offers Auto/Light/Dark, defaulting to Auto
 and reacting to system appearance changes. Both website preferences are saved
@@ -148,3 +150,24 @@ is already present in HTML. While motion is enabled, the raw top-aligned poster
 stays hidden until the correctly centered canvas is drawn, preventing a position
 jump. Failed sequence requests restore the static fallback. The interaction pill
 is placed 60 pixels above the visible artwork edge (subject to the stage margin).
+
+### Framing and animation performance
+
+Artwork bounds are measured offline with ImageIO in explicit sRGB and stored in
+`website/sequence-framing.json`. The sequence installer regenerates this file;
+run `scripts/measure-website-framing.sh` after manually changing active manifests.
+The website check validates its dimensions and pose counts. Idle poses share
+the maximum-angle bounds so their base remains stationary.
+
+The animation loop uses those bounds to center the device and shadow, avoiding
+canvas pixel readback. Stage measurements are cached until a resize or hero
+layout change; scroll updates calculate geometry without reading it back after
+writing styles. The original frame resolution, colors and decoded-image budget
+remain unchanged.
+
+On the development Apple M5 Max, a 1.8-second Chrome click animation presented
+86 poses instead of 10–12 before this change. All four measured opening/closing
+and scrolling runs stayed below 25 ms between animation callbacks (maximum
+16.8 ms). These are local measurements, not a frame-rate guarantee for other
+hardware or network conditions. Slow easing can intentionally hold a pose over
+multiple display refreshes; this is distinct from a blocked animation callback.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Install immutable frame URLs and update the website's appearance mapping."""
-import argparse, hashlib, json, re, shutil
+import argparse, hashlib, json, re, shutil, subprocess
 from pathlib import Path
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('source',type=Path)
@@ -31,3 +31,6 @@ if a.appearance=='light' and a.motion=='scroll':
     html=re.sub(r'(id="hinge-poster" src=")[^"]+',lambda m:m[1]+f'assets/{folder}/'+manifest['frames'][10],html)
 index.write_text(html)
 print(f'{a.appearance}: assets/{folder}/sequence.json')
+
+# Regenerate the presentation metadata whenever an active sequence changes.
+subprocess.run(['scripts/measure-website-framing.sh'],check=True)
