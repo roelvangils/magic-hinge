@@ -68,4 +68,3 @@
 /* Never paint the differently framed raw poster before the canvas is ready. */
 :root[data-sequence="loading"][data-reduce-motion="off"] #hinge-poster{visibility:hidden}
 
-.duo-icon{display:inline-block;width:1.15em;height:1em;vertical-align:-.12em;background:currentColor;-webkit-mask:url("assets/iphone-duo.svg") center/contain no-repeat;mask:url("assets/iphone-duo.svg") center/contain no-repeat}
