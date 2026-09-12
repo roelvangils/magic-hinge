@@ -35,3 +35,12 @@
 .hinge-warning{max-width:780px;margin:24px auto 0;font-size:12px;line-height:1.5;color:var(--muted);text-align:center;text-wrap:pretty}
 
 .feature-image[src="assets/feature-close.png"]{object-position:center bottom}
+
+.privacy{max-width:none;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:48px;align-items:start}
+.privacy-copy h2{margin-top:0}
+.app-overview{margin:0;justify-self:end;width:100%}
+.app-overview img{display:block;width:100%;height:auto}
+.app-overview .appearance-dark{display:none}
+[data-theme="dark"] .app-overview .appearance-light{display:none}
+[data-theme="dark"] .app-overview .appearance-dark{display:block}
+@media(max-width:760px){.privacy{grid-template-columns:1fr;gap:24px}}
