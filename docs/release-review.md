@@ -152,3 +152,11 @@ resource decoding/difference test and packaged-original comparisons passed.
 - Final DMG: 33261403 bytes; SHA-256 `338bc3cb7e3a673025dc978ab6761c7ca16934b86f0d9d777e5fbf8907cf9606`.
 - Website data and appcast generated from the final signed DMG.
 - macOS 14.2 runtime and manual hardware/permissions/VoiceOver checks remain pending and are disclosed as beta limitations.
+
+## Public delivery verification
+
+- GitHub release `v0.9.0` is explicitly a prerelease titled Magic Hinge 0.9 Beta.
+- Pages deployment passed. Clicking its actual download button downloaded the DMG; checksum, stapling and Gatekeeper checks passed on that download.
+- Homebrew cask audit passed; installation from the public release into an isolated application directory succeeded. Installed app Gatekeeper/stapling checks passed. Uninstall succeeded.
+- `brew upgrade --cask --greedy` correctly reported the installed version current; a between-version Homebrew upgrade remains untested because this is the first release.
+- Public CI exposed a type-inference timeout in the older hosted Swift compiler. Main now explicitly types the unchanged animation delay as Duration. The published binary was built and tested with the local compiler at release commit 50c40fa.

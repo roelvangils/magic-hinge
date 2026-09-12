@@ -27,21 +27,23 @@ cask=f'''cask "magic-hinge" do
   version "{r['version']}"
   sha256 "{sha}"
 
-  url "{url}"
+  url "{url.replace(r['version'], chr(35)+'{version}')}"
   name "Magic Hinge {r.get('displayVersion',r['version'])}"
-  desc "A frosted-glass desktop effect controlled by your MacBook hinge"
+  desc "Frosted-glass desktop effect controlled by your MacBook hinge"
   homepage "{r['website']}"
 
+  auto_updates true
   depends_on arch: :arm64
-  depends_on macos: ">= :sonoma"
+  depends_on macos: :sonoma
+
+  app "Magic Hinge.app"
+
   # Sonoma 14.0/14.1 are insufficient for SCScreenshotManager.
   preflight do
     if MacOS.version < MacOSVersion.new("14.2")
       odie "Magic Hinge requires macOS 14.2 or later."
     end
   end
-  auto_updates true
-  app "Magic Hinge.app"
 end
 '''
 (dmg.parent/'magic-hinge.rb').write_text(cask)

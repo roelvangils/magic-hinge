@@ -95,7 +95,8 @@ struct SimulatorView: View {
             while !Task.isCancelled {
                 let elapsed = ProcessInfo.processInfo.systemUptime-start
                 model.setAngle(80+30*cos(elapsed*1.1))
-                try? await Task.sleep(for:.milliseconds(ProcessInfo.processInfo.isLowPowerModeEnabled ? 33 : 16))
+                let frameDelay: Duration = .milliseconds(ProcessInfo.processInfo.isLowPowerModeEnabled ? 33 : 16)
+                try? await Task.sleep(for:frameDelay)
             }
         }
         .onChange(of:model.followSensor) { _,enabled in
