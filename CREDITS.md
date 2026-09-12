@@ -6,7 +6,7 @@ It does not relicense third-party assets or dependencies.
 
 | Material | Author / source | Terms |
 | --- | --- | --- |
-| App icon | Original artwork generated for Magic Hinge with OpenAI image generation | Included under this project's MIT license |
+| App icon | Magic Hinge glass artwork designed from the user-supplied silhouette in Apple Icon Composer | Included under this project's MIT license |
 | DuoDay.jpg, DuoNightStarless.jpg; BasicAppleGuy.png credit mark | [Basic Apple Guy](https://basicappleguy.com/haberdashery/iphone-duo-wallpaper) | Copyright remains with the creator; included with the maintainer's confirmed permission. No general reuse license is granted by this repository. |
 | Original Apple USDZ models | [Apple](docs/licenses/Apple-models.md) | Apple copyright and terms; downloaded from Apple on demand, never distributed in the app or repository. |
 | Studio Small 09 HDR | [Poly Haven](docs/licenses/PolyHaven-CC0.md) | CC0 1.0 |

@@ -1,10 +1,11 @@
 #!/bin/zsh
 set -euo pipefail
 cd "${0:A:h:h}"
-mkdir -p build/AppIcon.iconset
-for size in 16 32 128 256 512; do
-  sips -z "$size" "$size" assets/AppIcon.png --out "build/AppIcon.iconset/icon_${size}x${size}.png" >/dev/null
-  double=$((size * 2))
-  sips -z "$double" "$double" assets/AppIcon.png --out "build/AppIcon.iconset/icon_${size}x${size}@2x.png" >/dev/null
-done
-iconutil -c icns build/AppIcon.iconset -o build/AppIcon.icns
+mkdir -p build/composer-compiled
+minimum="$(python3 -c 'import json; print(json.load(open("release.json"))["minimumSystemVersion"])')"
+# actool preserves native light/dark Liquid Glass layers and supplies the legacy ICNS.
+xcrun actool 'assets/Magic Hinge.icon' --compile build/composer-compiled \
+  --platform macosx --minimum-deployment-target "$minimum" --app-icon 'Magic Hinge' \
+  --output-partial-info-plist build/composer-compiled/partial-info.plist \
+  --output-format human-readable-text
+cp 'build/composer-compiled/Magic Hinge.icns' build/AppIcon.icns

@@ -5,7 +5,7 @@ app, mode = Path(sys.argv[1]), sys.argv[2]
 r = json.loads(Path('release.json').read_text())
 p = dict(CFBundleIdentifier=r['bundleIdentifier'], CFBundleExecutable='MagicHinge',
          CFBundleName='Magic Hinge', CFBundleDisplayName='Magic Hinge', CFBundleDevelopmentRegion='en',
-         CFBundleLocalizations=['en','nl'], CFBundlePackageType='APPL', CFBundleIconFile='AppIcon',
+         CFBundleLocalizations=['en','nl'], CFBundlePackageType='APPL', CFBundleIconFile='Magic Hinge', CFBundleIconName='Magic Hinge',
          CFBundleShortVersionString=r['version'], MagicHingeDisplayVersion=r.get('displayVersion',r['version']), CFBundleVersion=str(r['build']),
          LSMinimumSystemVersion=r['minimumSystemVersion'], LSArchitecturePriority=['arm64'],
          NSHighResolutionCapable=True,

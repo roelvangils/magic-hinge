@@ -1,12 +1,15 @@
 # Magic Hinge icon
 
-`AppIcon.png` is the original project icon, created using the built-in OpenAI
-image-generation tool on 12 September 2026. Its transparent outer margin is
-preserved. `scripts/make-icon.sh` derives the standard macOS ICNS sizes; the same
-artwork is used on the website and DMG volume.
+`Magic Hinge.icon` is the editable Icon Composer source. The user-supplied folded
+silhouette is rendered as cyan/lilac glass, with a pearlescent rim and a short,
+rounded center bar of equal stroke width. The original vector is preserved in
+`icon-source/05-folded-glass.svg` and copied into the document's Assets folder.
 
-Prompt:
+`AppIcon.png` and `AppIcon-Dark.png` are the 1024px native Default/Dark exports.
+Run `scripts/export-composer-icon.sh` to regenerate previews. Website exports
+are 256px and follow the website appearance setting, including the favicon.
 
-> Create one original macOS application icon for Magic Hinge, an app that transforms a laptop screen into moving frosted glass as the lid tilts. A polished sculptural symbol: two simple thick translucent glass planes joined along one luminous hinge, one horizontal, one tilted upright, suggesting a laptop without a keyboard, any logo, or hardware product detail. Soft midnight blue and warm peach light on glass. Centered compact silhouette, beautiful and legible at tiny sizes, subtle depth, front three-quarter perspective. Within a deep navy rounded-square macOS icon tile. True transparent background outside the tile; comfortable consistent margin around tile on square 1024 canvas. No text, letters, numbers, watermark, Apple logo, stars, or extra objects. Deliver a single finished app icon, not a presentation or mockup.
-
-The generated source is 1280 pixels square. It is not a stock Apple icon.
+`scripts/make-icon.sh` compiles the native document with actool. The application
+bundles Assets.car with Aqua and DarkAqua icon stacks, plus the generated ICNS
+fallback for older macOS versions. The DMG uses that ICNS as its volume icon.
+The app's bundle identifier and preferences remain unchanged.

@@ -7,6 +7,11 @@ p = plistlib.loads((app/'Contents/Info.plist').read_bytes())
 assert p['CFBundleIdentifier'] == r['bundleIdentifier']
 assert p['CFBundleShortVersionString'] == r['version'] and p['CFBundleVersion'] == str(r['build'])
 assert p['LSMinimumSystemVersion'] == '14.2'
+assert p['CFBundleIconName'] == 'Magic Hinge' and p['CFBundleIconFile'] == 'Magic Hinge'
+assert (app/'Contents/Resources/Magic Hinge.icns').is_file()
+icon_assets=json.loads(subprocess.check_output(['xcrun','assetutil','--info',str(app/'Contents/Resources/Assets.car')]))
+icon_appearances={a.get('Appearance') for a in icon_assets if a.get('AssetType')=='IconImageStack' and a.get('Name')=='Magic Hinge'}
+assert {'NSAppearanceNameAqua','NSAppearanceNameDarkAqua'} <= icon_appearances, icon_appearances
 exe = app/'Contents/MacOS/MagicHinge'
 assert subprocess.check_output(['lipo','-archs',str(exe)],text=True).strip() == 'arm64'
 load = subprocess.check_output(['otool','-l',str(exe)],text=True)

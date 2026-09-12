@@ -1,6 +1,6 @@
 {
-  "version": "0.9.0",
-  "build": 39,
+  "version": "0.9.1",
+  "build": 40,
   "minimumSystemVersion": "14.2",
   "architecture": "arm64",
   "bundleIdentifier": "be.elevenways.MacBookDuo",
@@ -10,6 +10,6 @@
   "sparkleKeyAccount": "magic-hinge",
   "signingIdentity": "Developer ID Application: Roel Van Gils (N2982AVX2Z)",
   "teamID": "N2982AVX2Z",
-  "displayVersion": "0.9 Beta",
+  "displayVersion": "0.9.1 Beta",
   "prerelease": true
 }

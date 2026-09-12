@@ -36,7 +36,8 @@ for name in ('DuoNight.jpg', 'DesertWallpaper.jpg'):
 PYCODE
 sparkle="$scratch/artifacts/sparkle/Sparkle/Sparkle.xcframework/macos-arm64_x86_64/Sparkle.framework"
 ditto "$sparkle" "$app/Contents/Frameworks/Sparkle.framework"
-cp build/AppIcon.icns "$app/Contents/Resources/AppIcon.icns"
+cp build/AppIcon.icns "$app/Contents/Resources/Magic Hinge.icns"
+cp build/composer-compiled/Assets.car "$app/Contents/Resources/Assets.car"
 permission_resources="$app/Contents/Resources/PermissionFlow_PermissionFlow.bundle"
 if [[ -d "$permission_resources/Contents/Resources" ]]; then
   permission_resources="$permission_resources/Contents/Resources"

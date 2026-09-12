@@ -1,0 +1,84 @@
+{
+  "features" : [
+    "refractivity"
+  ],
+  "fill" : {
+    "automatic-gradient" : "extended-srgb:0.26000,0.34000,0.80000,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "image-name" : "05-folded-glass.svg",
+          "name" : "05-folded-glass"
+        }
+      ],
+      "name" : "Hinge and trackpad",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.15
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.08
+      }
+    },
+    {
+      "layers" : [
+
+      ],
+      "name" : "Gradient glass screen",
+      "refractivity" : {
+        "depth" : 0.12,
+        "enabled" : true,
+        "strength" : 0.18
+      },
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.16
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.16
+      }
+    },
+    {
+      "layers" : [
+
+      ],
+      "name" : "Display surround",
+      "refractivity" : {
+        "depth" : 0.08,
+        "enabled" : true,
+        "strength" : 0.22
+      },
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.35
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.12
+      }
+    },
+    {
+      "layers" : [
+
+      ],
+      "name" : "Aluminium base",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.3
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.12
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : [
+      "macOS"
+    ]
+  }
+}

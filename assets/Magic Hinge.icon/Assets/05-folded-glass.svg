@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="glass" x1="35" y1="55" x2="248" y2="230" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e0fcff"/>
+      <stop offset=".46" stop-color="#83d8fa"/>
+      <stop offset=".51" stop-color="#b9afff"/>
+      <stop offset="1" stop-color="#eedbff"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="33" y1="50" x2="254" y2="240" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff"/>
+      <stop offset=".48" stop-color="#e3faff"/>
+      <stop offset="1" stop-color="#c6bfff"/>
+    </linearGradient>
+  </defs>
+  <!-- The supplied silhouette, enlarged about its center without changing its geometry. -->
+  <g transform="matrix(0 2.7 -2.7 0 900 124)">
+    <path d="M143 67 68 52C44 47 33 50 33 71v130c0 12 2 18 15 21l95 18 95-18c13-3 16-9 16-21V71c0-21-11-24-35-19L143 67Z" fill="url(#glass)" fill-opacity=".72" stroke="url(#rim)" stroke-width="11" stroke-linejoin="round"/>
+    <path d="M143 105V202" fill="none" stroke="url(#rim)" stroke-width="11" stroke-linecap="round"/>
+  </g>
+</svg>

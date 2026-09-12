@@ -4,7 +4,7 @@ A little magic in your MacBook hinge. Tilt the screen and watch your desktop
 bend, soften and fade like frosted glass. Hold still and it settles back into place.
 
 Magic Hinge is free, open source, and available in English and Dutch.
-**0.9 Beta** is the first public prerelease. It is experimental, not a stable
+**0.9.1 Beta** is the first public prerelease. It is experimental, not a stable
 release. Hardware, permissions, VoiceOver and macOS 14.2 runtime checks remain
 open; see [the release report](docs/release-review.md).
 

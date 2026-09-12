@@ -9,14 +9,20 @@
   };
   let theme = read('theme', ['auto','light','dark'], 'auto');
   let motion = read('motion', ['on','off'], 'off');
+  function updateIcon() {
+    const icon = document.querySelector('#site-icon');
+    if (icon) icon.href = `assets/icon-${root.dataset.theme}.png`;
+  }
   function apply() {
     root.dataset.theme = theme === 'auto' ? (systemDark.matches ? 'dark' : 'light') : theme;
     root.dataset.reduceMotion = motion;
+    updateIcon();
     window.dispatchEvent(new Event('websitepreferenceschange'));
   }
   apply();
   systemDark.addEventListener('change', apply);
   document.addEventListener('DOMContentLoaded', () => {
+    updateIcon();
     document.querySelectorAll('.footer-preferences input').forEach(input => {
       input.checked = input.value === (input.name === 'theme' ? theme : motion);
       input.addEventListener('change', () => {

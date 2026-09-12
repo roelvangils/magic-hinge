@@ -160,3 +160,17 @@ resource decoding/difference test and packaged-original comparisons passed.
 - Homebrew cask audit passed; installation from the public release into an isolated application directory succeeded. Installed app Gatekeeper/stapling checks passed. Uninstall succeeded.
 - `brew upgrade --cask --greedy` correctly reported the installed version current; a between-version Homebrew upgrade remains untested because this is the first release.
 - Public CI exposed a type-inference timeout in the older hosted Swift compiler. Main now separates view content, lifecycle modifiers and the preview loop to keep type-checking bounded; preview delays remain 16/33 ms. The published binary was built and tested with the local compiler at release commit 50c40fa.
+
+## 0.9.1 Beta — icon update
+
+The Icon Composer source now ships with native Aqua/DarkAqua icon stacks and an
+actool-generated legacy ICNS. The exported PNGs are 1024px; website icons are
+256px and switch with the website appearance preference. Button text contrast
+is 6.06:1; the light headline's lightest endpoint is 4.72:1 against the hero.
+
+App notarization: `6a08c33b-4def-4c4e-956b-8dd47f849964`.
+DMG notarization: `f55ad0ef-9d62-44c5-8dfd-d0fc37d8b3f7`.
+DMG size: 32,166,361 bytes. SHA-256:
+`ae83350d7ef31a4b82344393318426052d5bf30bdde8c0ca7bde25f44d4b58ac`.
+Both stapling and Gatekeeper checks passed. The local /Applications copy was
+updated after validation; the previous app is preserved in an ignored backup.
