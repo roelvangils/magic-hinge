@@ -7,7 +7,7 @@
   <title>Magic Hinge 0.9 Beta — A little magic in your MacBook</title>
   <script src="preferences.js"></script>
   <link rel="icon" href="assets/icon.png"><link rel="stylesheet" href="style.css">
-  <script src="site.js" defer></script>
+  <script src="site.js" defer onerror="document.documentElement.dataset.sequence = 'fallback'"></script>
 </head>
 <body>
   <header class="site-header"><nav aria-label="Main"><a class="brand" href="#"><img src="assets/icon.png" width="44" height="44" alt="">Magic Hinge</a><a class="source-link" href="https://github.com/roelvangils/magic-hinge"><img class="github-logo" src="assets/github.svg" alt="" width="20" height="20"> <span>Source on GitHub</span></a></nav></header>
@@ -16,7 +16,7 @@
       <p class="eyebrow">A completely unnecessary upgrade to opening your laptop.</p>
       <h1 id="headline" aria-label="Open up to a little magic."><span class="title-words" aria-hidden="true"><span class="title-word" data-word="Open" style="--word-start:0%;--word-end:22%">Open</span> <span class="title-word" data-word="up" style="--word-start:22%;--word-end:34%">up</span> <span class="title-word" data-word="to" style="--word-start:34%;--word-end:42%">to</span> <span class="title-word" data-word="a" style="--word-start:42%;--word-end:47%">a</span> <span class="title-word" data-word="little" style="--word-start:47%;--word-end:66%">little</span> <span class="title-word" data-word="magic." style="--word-start:66%;--word-end:100%">magic.</span></span></h1>
       <p class="intro">Brings the iPhone Duo screen animation to your MacBook.</p>
-      <div class="download"><a id="download" class="button" hidden><img class="apple-logo" src="assets/apple.svg" alt="" width="20" height="24">Download 0.9 Beta for macOS</a><p id="release-status" class="visually-hidden" role="status">Magic Hinge 0.9 Beta is being prepared.</p></div>
+      <div class="download"><a id="download" class="button" href="https://github.com/roelvangils/magic-hinge/releases/download/v0.9.0/Magic-Hinge-0.9.0.dmg"><img class="apple-logo" src="assets/apple.svg" alt="" width="20" height="24">Download 0.9 Beta for macOS</a><p id="release-status" class="visually-hidden" role="status">Magic Hinge 0.9 Beta</p></div>
       <p class="requirements">Public beta · Free &amp; open source · Apple Notarized · macOS 14.2 or later</p>
     </section>
     <section class="hinge-story" aria-label="MacBook Air opening animation" data-idle-sequence="assets/air-idle-light-5058af0cc78f/sequence.json" data-dark-idle-sequence="assets/air-idle-dark-898a54933113/sequence.json" data-sequence="assets/air-front-light-71baf01d54b9/sequence.json" data-dark-sequence="assets/air-front-dark-9a4e4c0598a0/sequence.json">

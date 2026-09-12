@@ -19,7 +19,7 @@ fetch('release.json').then(response => {
   download.href = release.url; download.hidden = false;
   document.querySelector('#release-status').textContent = release.displayVersion || `Version ${release.version}`;
   document.querySelector('#version').textContent = release.displayVersion || `v${release.version}`;
-}).catch(() => { /* Keep the honest preparation state until a verified release exists. */ });
+}).catch(() => { /* The HTML retains the last verified release link when offline. */ });
 
 // The scroll position selects pre-rendered geometry; wheel/touch remain native.
 // Decode a small moving window rather than retaining the whole sequence in RAM.
@@ -36,7 +36,25 @@ fetch('release.json').then(response => {
   const updateDescription = () => { poster.alt = `A ${theme === 'dark' ? 'dark gray' : 'silver'} 13-inch MacBook Air opening to reveal the Magic Hinge glass effect on a ${theme === 'dark' ? 'dark' : 'light'} example desktop.`; };
   updateDescription();
   const context = canvas.getContext('2d', { alpha: false });
-  if (!context) return;
+  function fallback() {
+    root.dataset.sequence = 'fallback';
+    story.classList.remove('is-animated');
+    story.firstElementChild.style.height = '';
+  }
+  if (!context) { fallback(); return; }
+  function layoutStage() {
+    const rect = story.getBoundingClientRect();
+    const stage = story.firstElementChild;
+    const headerHeight = document.querySelector('.site-header').offsetHeight;
+    const storyTop = rect.top + scrollY;
+    const available = Math.max(280,innerHeight-storyTop);
+    const expanded = Math.max(280,innerHeight-headerHeight);
+    const reveal = Math.max(0,Math.min(1,scrollY/Math.max(1,storyTop-headerHeight)));
+    stage.style.height = `${available+(expanded-available)*reveal}px`;
+    return {rect,stage,headerHeight,storyTop};
+  }
+  // Reserve the final stage geometry before awaiting any network resources.
+  if (root.dataset.reduceMotion !== 'on') { story.classList.add('is-animated'); layoutStage(); }
   let manifest;
   let manifestURL = new URL(theme === 'dark' ? story.dataset.darkSequence : story.dataset.sequence, location.href);
   const firstFrame = 10; // About 3°: matches the top of the gentle idle movement.
@@ -56,12 +74,12 @@ fetch('release.json').then(response => {
         return {...m, frames:m.frames.map(name => new URL(name,url).href), poster:new URL(m.poster,url).href};
       }));
       const [scroll,idle] = sequences;
-      if (scroll.width !== idle.width || scroll.height !== idle.height || idle.motion !== 'idle' || idle.maximumAngle !== 3) return;
+      if (scroll.width !== idle.width || scroll.height !== idle.height || idle.motion !== 'idle' || idle.maximumAngle !== 3) throw new Error('Mismatched idle sequence');
       manifests.set(new URL(scrollPath,location.href).href,{...scroll,scrollCount:scroll.frames.length,idleCount:idle.frames.length,frames:[...scroll.frames,...idle.frames]});
     }
     manifest = manifests.get(manifestURL.href);
-    if ([...manifests.values()].some(m => m.width !== manifest.width || m.height !== manifest.height || m.frames.length !== manifest.frames.length || m.scrollCount !== manifest.scrollCount)) return;
-  } catch { return; }
+    if ([...manifests.values()].some(m => m.width !== manifest.width || m.height !== manifest.height || m.frames.length !== manifest.frames.length || m.scrollCount !== manifest.scrollCount)) throw new Error('Mismatched appearances');
+  } catch { fallback(); return; }
   previewFrame = manifest.frames[firstFrame];
   poster.src = new URL(previewFrame,manifestURL).href;
   canvas.width = manifest.width; canvas.height = Math.round(manifest.height*0.86);
@@ -108,7 +126,7 @@ fetch('release.json').then(response => {
     const height = Math.min(canvas.clientHeight,canvas.clientWidth*canvas.height/canvas.width);
     const firstTop = artworkTop.get(image) || 0;
     const top = (canvas.clientHeight-height)/2 + height*firstTop/canvas.height;
-    pill.style.top = `${Math.max(4,top-44)}px`;
+    pill.style.top = `${Math.max(4,top-60)}px`;
   }
   const cache = new Map();
   const failed = new Set();
@@ -216,27 +234,20 @@ fetch('release.json').then(response => {
       manifest = manifests.get(manifestURL.href); previewFrame = manifest.frames[firstFrame];
       poster.src = new URL(enabled() ? previewFrame : manifest.poster,manifestURL).href;
       cache.clear(); loading.clear(); failed.clear(); drawn = -1;
-      canvas.hidden = true; poster.hidden = false;
+      canvas.hidden = true; poster.hidden = false; root.dataset.sequence = 'loading';
     }
     if (!enabled()) {
       stopPlayback(); play.hidden = true; pill.hidden = true; canvas.dataset.idle = 'false';
       if (downloads.size) { generation++; resetDownloads(); idleFraming = null; loading.clear(); }
-      story.classList.remove('is-animated'); canvas.hidden = true; poster.hidden = false;
+      fallback(); canvas.hidden = true; poster.hidden = false;
       poster.src = new URL(manifest.poster,manifestURL).href;
       hint.hidden = true; caption.textContent = 'Your desktop, with a little magic.';
       cache.clear(); drawn = -1; return;
     }
     story.classList.add('is-animated');
-    play.hidden = false; pill.hidden = false;
-    const rect = story.getBoundingClientRect();
-    const stage = story.firstElementChild;
-    const headerHeight = document.querySelector('.site-header').offsetHeight;
-    const storyTop = rect.top + scrollY;
-    // Center the first glimpse below the hero; use the full viewport as it scrolls away.
-    const available = Math.max(280,innerHeight-storyTop);
-    const expanded = Math.max(280,innerHeight-headerHeight);
-    const reveal = Math.max(0,Math.min(1,scrollY/Math.max(1,storyTop-headerHeight)));
-    stage.style.height = `${available+(expanded-available)*reveal}px`;
+    play.hidden = drawn < 0; pill.hidden = drawn < 0;
+    if (drawn < 0) root.dataset.sequence = 'loading';
+    const {rect,stage,headerHeight,storyTop} = layoutStage();
     // Start as the device enters view, instead of waiting for the sticky pin.
     const start = Math.max(0,storyTop-innerHeight*0.65);
     const end = storyTop + rect.height-stage.offsetHeight-headerHeight;
@@ -257,6 +268,7 @@ fetch('release.json').then(response => {
     // Keep the last good frame visible during a fast scroll or a failed request.
     if (cache.has(target) && target !== drawn) {
       drawFrame(cache.get(target),isIdle);
+      root.dataset.sequence = 'ready'; play.hidden = false; pill.hidden = false;
       drawn = target; canvas.dataset.frame = String(target); canvas.hidden = false; poster.hidden = true;
     }
     if (drawn >= 0 && cache.has(drawn)) positionPill(cache.get(drawn));

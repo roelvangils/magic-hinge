@@ -23,6 +23,7 @@ assert 'lang="en"' in (root/'index.html').read_text()
 if args.release:
     r=json.loads((root/'release.json').read_text())
     canonical=json.loads(Path('release.json').read_text())
+    assert 'href="'+r['url']+'"' in (root/'index.html').read_text()
     assert r['version']==canonical['version'] and r['build']==canonical['build']
     if canonical.get('prerelease'):
         assert r.get('prerelease') is True

@@ -64,3 +64,6 @@
 .interaction-pill{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:5px;white-space:nowrap;padding:6px 12px;border-radius:999px;background:#e8e8ed;color:#55555a;font-size:12px;line-height:20px;pointer-events:none}
 .interaction-pill span{display:inline-flex;align-items:center;gap:3px}
 .interaction-pill img{width:20px;height:20px;display:block}
+
+/* Never paint the differently framed raw poster before the canvas is ready. */
+:root[data-sequence="loading"][data-reduce-motion="off"] #hinge-poster{visibility:hidden}

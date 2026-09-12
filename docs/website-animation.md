@@ -142,3 +142,9 @@ reveals the color. No gray layer remains visible after completion, avoiding
 antialiasing fringes. Word gradients continue the heading's ink-to-steel palette.
 The heading retains one accessible name. The site Reduce Motion control shows
 the final colored title immediately; forced colors uses ordinary system text.
+
+Cold loads reserve the stage height before sequence requests. The download link
+is already present in HTML. While motion is enabled, the raw top-aligned poster
+stays hidden until the correctly centered canvas is drawn, preventing a position
+jump. Failed sequence requests restore the static fallback. The interaction pill
+is placed 60 pixels above the visible artwork edge (subject to the stage margin).

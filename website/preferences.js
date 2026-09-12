@@ -1,6 +1,7 @@
 // Apply saved appearance before CSS paints. Motion is deliberately opt-out on this site.
 (() => {
   const root = document.documentElement;
+  root.dataset.sequence = 'loading';
   const systemDark = matchMedia('(prefers-color-scheme: dark)');
   const read = (key, values, fallback) => {
     try { const value = localStorage.getItem(`magic-hinge.website.${key}`); return values.includes(value) ? value : fallback; }

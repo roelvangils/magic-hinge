@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Generate the website data, cask and appcast from the FINAL stapled download."""
-import base64, hashlib, json, subprocess, sys, xml.etree.ElementTree as ET
+import base64, hashlib, json, re, subprocess, sys, xml.etree.ElementTree as ET
 from pathlib import Path
 r=json.loads(Path('release.json').read_text());dmg=Path(sys.argv[1]).resolve()
 assert dmg.name == f'Magic-Hinge-{r["version"]}.dmg'
@@ -14,6 +14,12 @@ sha=hashlib.sha256(dmg.read_bytes()).hexdigest();url=f'https://github.com/{r["re
 data=dict(displayVersion=r.get('displayVersion',r['version']),prerelease=r.get('prerelease',False),version=r['version'],build=r['build'],minimumSystemVersion=r['minimumSystemVersion'],url=url,sha256=sha,length=dmg.stat().st_size,signature=signature)
 (dmg.parent/'release-final.json').write_text(json.dumps(data,indent=2)+'\n')
 Path('website/release.json').write_text(json.dumps(data,indent=2)+'\n')
+# The verified link is present at first paint, without waiting for release.json.
+index=Path('website/index.html')
+html,count=re.subn(r'(<a id="download"[^>]*href=")[^"]+',lambda m:m[1]+url,index.read_text())
+assert count==1, 'Missing static download link'
+index.write_text(html)
+
 ns='http://www.andymatuschak.org/xml-namespaces/sparkle';ET.register_namespace('sparkle',ns)
 rss=ET.Element('rss',version='2.0');channel=ET.SubElement(rss,'channel')
 ET.SubElement(channel,'title').text='Magic Hinge';ET.SubElement(channel,'link').text=r['website']
