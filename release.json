@@ -11,5 +11,6 @@
   "signingIdentity": "Developer ID Application: Roel Van Gils (N2982AVX2Z)",
   "teamID": "N2982AVX2Z",
   "displayVersion": "0.9.1 Beta",
-  "prerelease": true
+  "prerelease": true,
+  "sentryDsn": "https://6e213c3655562d2b19f337614de97230@o4511479088349184.ingest.de.sentry.io/4512079439331408"
 }

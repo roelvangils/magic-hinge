@@ -24,6 +24,19 @@ staging="$(mktemp -d "$PWD/build/app-stage.XXXXXX")"
 app="$staging/Magic Hinge.app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources" "$app/Contents/Frameworks"
 cp "$bin_dir/MagicHinge" "$app/Contents/MacOS/MagicHinge"
+# Sentry is statically linked; retain its SDK privacy manifest in a resource bundle.
+sentry_resources="$app/Contents/Resources/SentryPrivacy.bundle"
+mkdir -p "$sentry_resources"
+cp "$scratch/artifacts/sentry-cocoa/Sentry/Sentry.xcframework/macos-arm64_arm64e_x86_64/Sentry.framework/Versions/A/Resources/PrivacyInfo.xcprivacy" "$sentry_resources/"
+# Keep matching symbols outside the distributed app for private Sentry uploads.
+if [[ "$configuration" == release ]]; then
+  symbols="$staging/MagicHinge.dSYM"
+  xcrun dsymutil "$bin_dir/MagicHinge" -o "$symbols"
+  symbol_uuid="$(xcrun dwarfdump --uuid "$symbols" | awk '/arm64/ {print $2; exit}')"
+  [[ -n "$symbol_uuid" ]] || { print -u2 'Missing release debug UUID'; exit 1; }
+  mkdir -p "build/symbols/$symbol_uuid"
+  ditto "$symbols" "build/symbols/$symbol_uuid/MagicHinge.dSYM"
+fi
 for name in MagicHinge_DuoCore MagicHinge_DuoGraphics MagicHinge_DuoSimulation MagicHinge_MagicHinge PermissionFlow_PermissionFlow; do
   ditto "$bin_dir/$name.bundle" "$app/Contents/Resources/$name.bundle"
 done

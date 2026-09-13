@@ -113,3 +113,5 @@
 "Check for Updates…" = "Check for Updates…";
 "Automatically check for updates" = "Automatically check for updates";
 "Show welcome guide…" = "Show welcome guide…";
+"Send crash reports" = "Send crash reports";
+"Help improve Magic Hinge by sending crash details to Sentry. Reports include app and macOS versions, device information and stack traces. Screen images are never included." = "Help improve Magic Hinge by sending crash details to Sentry. Reports include app and macOS versions, device information and stack traces. Screen images are never included.";

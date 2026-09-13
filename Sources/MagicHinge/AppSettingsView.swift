@@ -19,6 +19,7 @@ struct AppSettingsView: View {
     @ObservedObject var simulator: SimulatorModel
     @ObservedObject var onboarding: OnboardingCoordinator
     @ObservedObject var updater: UpdaterService
+    @ObservedObject var crashReporting: CrashReportingService
     @Environment(\.openWindow) private var openWindow
     @AppStorage("appearance") private var appearance = AppAppearance.auto
     var body: some View {
@@ -35,6 +36,13 @@ struct AppSettingsView: View {
                     Toggle(L10n.text("Automatically check for updates"), isOn: $updater.automaticallyChecksForUpdates)
                     Button(L10n.text("Check for Updates…")) { updater.checkForUpdates() }.disabled(!updater.canCheckForUpdates)
                     Button(L10n.text("Show welcome guide…")) { onboarding.reopen(); openWindow(id: "main") }
+                }
+                if crashReporting.isConfigured {
+                    Section {
+                        Toggle(L10n.text("Send crash reports"), isOn: $crashReporting.enabled)
+                        Text(L10n.text("Help improve Magic Hinge by sending crash details to Sentry. Reports include app and macOS versions, device information and stack traces. Screen images are never included."))
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
                 }
                 Section(L10n.text("Animate on")) {
                     Toggle(L10n.text("Opening the lid"),isOn:$model.settings.animateOnOpen)

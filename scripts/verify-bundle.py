@@ -12,6 +12,8 @@ assert (app/'Contents/Resources/Magic Hinge.icns').is_file()
 icon_assets=json.loads(subprocess.check_output(['xcrun','assetutil','--info',str(app/'Contents/Resources/Assets.car')]))
 icon_appearances={a.get('Appearance') for a in icon_assets if a.get('AssetType')=='IconImageStack' and a.get('Name')=='Magic Hinge'}
 assert {'NSAppearanceNameAqua','NSAppearanceNameDarkAqua'} <= icon_appearances, icon_appearances
+privacy = app/'Contents/Resources/SentryPrivacy.bundle/PrivacyInfo.xcprivacy'
+assert privacy.is_file() and isinstance(plistlib.loads(privacy.read_bytes()), dict)
 exe = app/'Contents/MacOS/MagicHinge'
 assert subprocess.check_output(['lipo','-archs',str(exe)],text=True).strip() == 'arm64'
 load = subprocess.check_output(['otool','-l',str(exe)],text=True)

@@ -12,8 +12,14 @@ struct MagicHingeApp: App {
     @StateObject private var model: AppModel
     @StateObject private var onboarding = OnboardingCoordinator()
     @StateObject private var updater = UpdaterService()
+    @StateObject private var crashReporting: CrashReportingService
     @StateObject private var simulator = SimulatorModel(demoOnly: CommandLine.arguments.contains("--example-image"))
     init() {
+        #if DEBUG
+        if CommandLine.arguments.contains("--sentry-smoke-test") {
+            CrashReportingService.runSmokeTest()
+        }
+        #endif
         if CommandLine.arguments.contains("--sensor-trace") {
             let sensor = HingeSensor()
             let recorder = SensorTraceRecorder()
@@ -36,6 +42,8 @@ struct MagicHingeApp: App {
             sensor.stop()
             exit(success ? 0 : 1)
         }
+        let reporting = CrashReportingService()
+        _crashReporting = StateObject(wrappedValue: reporting)
         _model = StateObject(wrappedValue: AppModel())
     }
     var body: some Scene {
@@ -64,7 +72,7 @@ struct MagicHingeApp: App {
             .windowResizability(.contentSize)
             .defaultPosition(.center)
             .windowStyle(.hiddenTitleBar)
-        Settings { AppSettingsView(model:model, simulator:simulator, onboarding:onboarding, updater:updater) }
+        Settings { AppSettingsView(model:model, simulator:simulator, onboarding:onboarding, updater:updater, crashReporting:crashReporting) }
         MenuBarExtra("Magic Hinge", systemImage: "laptopcomputer") {
             MenuContent(model: model)
         }

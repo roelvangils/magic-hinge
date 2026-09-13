@@ -62,7 +62,9 @@ are compiled only for development.
 ## Privacy and credits
 
 Screen images stay in memory on your Mac. They are never saved or uploaded.
-There is no account or analytics. See [privacy](PRIVACY.md),
+There is no account or usage analytics. Optional crash reporting through Sentry is
+off by default in configured builds. See [crash reporting](docs/crash-reporting.md),
+[privacy](PRIVACY.md),
 [credits and asset terms](CREDITS.md) and the [MIT license](LICENSE).
 Third-party assets retain their own terms and are excluded from MIT.
 

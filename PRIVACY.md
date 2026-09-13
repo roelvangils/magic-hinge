@@ -30,7 +30,19 @@ disabled, and the tracker respects browser Do Not Track settings. Matomo receive
 standard request information, including the IP address and browser information,
 as well as the page URL and referrer. Tracking runs only on the public Magic
 Hinge website, not local previews. The website does not load remote fonts.
-The Magic Hinge app itself contains no analytics.
+The Magic Hinge app contains no usage analytics. In builds configured for Sentry,
+you can opt in to **Send crash reports** in General settings (off by default).
+Crash reports include stack traces, app/build and macOS versions, and technical
+device information. They go to the maintainer's Magic Hinge project on Sentry.
+Sentry receives the IP address as part of the network connection; the SDK does
+not explicitly include it or a user identity in the event. The project also
+enables server-side IP scrubbing. Sentry may still derive an approximate location
+from the connection. Persistent device identifiers and locale/timezone
+context are removed before sending. No screenshots,
+session replay, interaction breadcrumbs, performance traces or application logs
+are collected by this integration. Reports may be cached locally and delivered
+after the app restarts. Turning the setting off stops crash reporting; reports
+already received by Sentry are not withdrawn.
 
 Local diagnostic logs contain timings, dimensions, error messages and render
 status. They contain no screenshot pixels. Development tests can export synthetic
