@@ -78,3 +78,5 @@
 .hardware{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:64px;padding:72px 0;border-bottom:1px solid var(--line)}
 .hardware h2{font-size:40px;margin:16px 0}.hardware p,.hardware dd{color:var(--muted);font-size:17px;line-height:1.47}.hardware .eyebrow{font-size:12px}.hardware-specs{margin:0}.hardware-specs>div{padding:20px 0;border-bottom:1px solid var(--line)}.hardware-specs>div:first-child{padding-top:0}.hardware-specs>div:last-child{border:0;padding-bottom:0}.hardware dt{font-weight:600;font-size:19px}.hardware dd{margin:8px 0 0}
 @media(max-width:760px){.hardware{grid-template-columns:1fr;gap:24px;padding:40px 0}.hardware h2{font-size:32px}}
+
+.hardware dt{display:flex;align-items:center;gap:10px}.requirement-icon{flex:none;width:28px;height:28px;opacity:.8}html[data-theme="dark"] .requirement-icon{filter:brightness(0) invert(.68)}

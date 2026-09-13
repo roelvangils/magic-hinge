@@ -1,7 +1,7 @@
 import AppKit
 import CoreText
 // The SF Symbol characters supplied for these exact system symbol names.
-let symbols = [("cursorarrow.click","􀭆"),("rectangle.and.hand.point.up.left","􀪤"),("digitalcrown.arrow.counterclockwise","􀻘")]
+let symbols = [("cursorarrow.click","􀭆"),("rectangle.and.hand.point.up.left","􀪤"),("digitalcrown.arrow.counterclockwise","􀻘"),("cpu.fill","􀧓"),("applelogo","􀣺"),("sensor.tag.radiowaves.forward.fill","􁁞"),("rectangle.inset.filled.badge.record","􂃕"),("globe","􀆪")]
 func n(_ value:CGFloat) -> String { String(format:"%.4f",Double(value)) }
 for (name,character) in symbols {
     let line = CTLineCreateWithAttributedString(NSAttributedString(string:character,attributes:[.font:NSFont.systemFont(ofSize:32)]))
