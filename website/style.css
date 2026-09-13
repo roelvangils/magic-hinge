@@ -80,3 +80,5 @@
 @media(max-width:760px){.hardware{grid-template-columns:1fr;gap:24px;padding:40px 0}.hardware h2{font-size:32px}}
 
 .hardware dt{display:flex;align-items:center;gap:10px}.requirement-icon{flex:none;width:28px;height:28px;opacity:.8}html[data-theme="dark"] .requirement-icon{filter:brightness(0) invert(.68)}
+
+.homebrew-heading{display:flex;align-items:center;gap:12px}.homebrew-heading img{flex:none;object-fit:contain}
