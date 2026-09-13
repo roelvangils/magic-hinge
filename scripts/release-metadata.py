@@ -16,8 +16,8 @@ data=dict(displayVersion=r.get('displayVersion',r['version']),prerelease=r.get('
 Path('website/release.json').write_text(json.dumps(data,indent=2)+'\n')
 # The verified link is present at first paint, without waiting for release.json.
 index=Path('website/index.html')
-html,count=re.subn(r'(<a id="download"[^>]*href=")[^"]+',lambda m:m[1]+url,index.read_text())
-assert count==1, 'Missing static download link'
+html,count=re.subn(r'(<a id="download(?:-install)?"[^>]*href=")[^"]+',lambda m:m[1]+url,index.read_text())
+assert count==2, 'Missing static download links'
 index.write_text(html)
 
 ns='http://www.andymatuschak.org/xml-namespaces/sparkle';ET.register_namespace('sparkle',ns)

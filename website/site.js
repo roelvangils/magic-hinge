@@ -15,8 +15,9 @@ fetch('release.json').then(response => {
   if (!/^\d+\.\d+\.\d+$/.test(release.version) || !/^[a-f0-9]{64}$/.test(release.sha256)) throw new Error('Invalid release');
   const expected = `https://github.com/roelvangils/magic-hinge/releases/download/v${release.version}/Magic-Hinge-${release.version}.dmg`;
   if (release.url !== expected) throw new Error('Invalid download');
-  const download = document.querySelector('#download');
-  download.href = release.url; download.hidden = false;
+  document.querySelectorAll('#download, #download-install').forEach(download => {
+    download.href = release.url; download.hidden = false;
+  });
   document.querySelector('#release-status').textContent = release.displayVersion || `Version ${release.version}`;
   document.querySelector('#version').textContent = release.displayVersion || `v${release.version}`;
 }).catch(() => { /* The HTML retains the last verified release link when offline. */ });
